@@ -1,6 +1,6 @@
 # Note: you can specify an individual run in the transcripts here if there are multiple evals and you don't want to scan all of them. However this does mean that scout view will not display transcripts properly.
-transcripts: ./core_bench/eval-logs
-scans: ./core_bench/scan-results
+transcripts: ./eval-logs
+scans: ./scan-results
 
 scanners:
   # - name: answer_format
@@ -14,7 +14,11 @@ scanners:
   # - name: ground_truth_access
   #   file: scanners.py
   - name: grading_answers
-    file: scanners.py
+    file: /home/jeffm/projects/scanner_evaluation/evals/scanners.py
+  - name: grading_guessing
+    file: /home/jeffm/projects/scanner_evaluation/evals/scanners.py
+  # - name: grading_guessing_asst
+  #   file: /home/jeffm/projects/scanner_evaluation/evals/scanners.py
 
 validation:
 #   answer_format: ./core_bench/validation/core_bench_easy_oh1_3pointscale.csv

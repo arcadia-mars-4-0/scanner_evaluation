@@ -33,21 +33,152 @@ from inspect_scout import (
 
 ## ----------- Scanner implementations ---------
 
-# ----Impossible_task----
-# a pilot scanner to check for general impossibility of the task. This is intentionally quite open ended
+# ---- Grading Scanner - Questions --------
+# This scanner is intended to be useful for human grading of answer matching related criteria (o.h.1, o.a.1, o.a.2, o.b.1).
+# It targets the prompt, model submission, and gold standard answers.
+# There is no LLM judge, this scanner simply pulls the relevant messages as specified programatically
+# and returns those messages as the scanner explanation. This allows them to be viewed conveniently along side the transcript.
+# Because there is no llm in the loop, this is free and fast
+
 @scanner(messages="all")
-def impossible_task() -> Scanner[Transcript]:
+def grading_answers() -> Scanner[Transcript]:
+    
+    async def scan(transcript: Transcript) -> Result:
+
+        system_text = "\n".join(
+            m.text for m in transcript.messages if m.role == "system"
+        )
+        user_text = "\n".join(
+            m.text for m in transcript.messages if m.role == "user"
+        )
+        final_msg = transcript.messages[-1] if transcript.messages else None
+        final_text = final_msg.text if final_msg else "(no final message)"
+        sample_metadata = (transcript.metadata or {}).get("sample_metadata", {})
+        gold_answers = sample_metadata.get("results", "(not available)")
+        task_result = "PASSED" if transcript.success else "FAILED"
+
+        text_selection = (
+            f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
+            f"--- USER PROMPT ---\n{user_text}\n\n"
+            f"--- FINAL SUBMISSION ---\n{final_text}\n\n"
+            f"--- GOLD STANDARD ANSWERS ---\n{gold_answers}\n\n"
+            f"--- TASK RESULT ---\n{task_result}\n"
+        )
+
+        return Result(value = True, explanation=text_selection)
+
+    return scan
+
+# ---- Grading Scanner - Guessing --------
+# This scanner is intended to be useful for human grading of guessing related criteria (o.b.2, o.b.3, o.h.2).
+# It targets the prompt, model submission, and gold standard answers.
+# There is no LLM judge, this scanner simply pulls the relevant messages as specified programatically
+# and returns those messages as the scanner explanation. This allows them to be viewed conveniently along side the transcript.
+# Because there is no llm in the loop, this is free and fast
+
+@scanner(messages="all")
+def grading_guessing() -> Scanner[Transcript]:
+    
+    async def scan(transcript: Transcript) -> Result:
+
+        sample_metadata = (transcript.metadata or {}).get("sample_metadata", {})
+        gold_answers = sample_metadata.get("results", "(not available)")
+        task_result = "PASSED" if transcript.success else "FAILED"
+        system_text = "\n".join(
+            f"[M{i}] {m.text}" for i, m in enumerate(transcript.messages) if m.role == "system"
+        )
+        user_text = "\n".join(
+            f"[M{i}] {m.text}" for i, m in enumerate(transcript.messages) if m.role == "user"
+        )
+        final_idx = len(transcript.messages) - 1 if transcript.messages else None
+        final_msg = transcript.messages[final_idx] if final_idx is not None else None
+        final_text = f"[M{final_idx}] {final_msg.text}" if final_msg else "(no final message)"
+        # This intentionally omits tool calls, which can create very bloated transcripts, and just focuses on the model reasoning and messages. Also note sometimes the reasoning is redacted.
+        def assistant_text(m) -> str:
+            if isinstance(m.content, str):
+                return m.content
+            parts = []
+            for c in m.content:
+                if c.type == "reasoning":
+                    thinking = c.reasoning if not c.redacted else (c.summary or "REDACTED")
+                    parts.append(f"reasoning trace:\n{thinking}\n [end of reasoning]")
+                elif c.type == "text":
+                    parts.append(c.text)
+            return "\n".join(parts)
+
+        preceding_assistant = [(i, m) for i, m in enumerate(transcript.messages[:-1]) if m.role == "assistant"][-5:]
+        preceding_text = "\n\n".join(f"[M{i}] {assistant_text(m)}" for i, m in preceding_assistant) or "(none)"
+
+        text_selection = (
+            f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
+            f"--- USER PROMPT ---\n{user_text}\n\n"
+            f"--- LAST 5 MESSAGES ---\n {preceding_text}\n\n"
+            f"--- FINAL SUBMISSION ---\n{final_text}\n\n"
+            f"--- GOLD STANDARD ANSWERS ---\n{gold_answers}\n\n"
+            f"--- TASK RESULT ---\n{task_result}\n"
+        )
+        # Note, I added this section to allow for message links. This might be overkill but I found it useful
+        system_msgs = [(i, m) for i, m in enumerate(transcript.messages) if m.role == "system"]
+        user_msgs = [(i, m) for i, m in enumerate(transcript.messages) if m.role == "user"]
+        final_msgs = [(final_idx, final_msg)] if final_msg else []
+        refs = [
+            Reference(type="message", cite=f"M{i}", id=m.id or uuid())
+            for i, m in system_msgs + user_msgs + preceding_assistant + final_msgs
+        ]
+
+        return Result(value=True, explanation=text_selection, references=refs)
+
+    return scan
+
+# ---- Grading Scanner - Guessing -- LLM help --------
+# This scanner is intended to be useful for human grading of guessing related criteria (o.b.2, o.b.3, o.h.2).
+# Unlike the previous iteration, this version uses an LLM judge to highlight relevant messages.
+# This is sort of the same as running a scanner, so might bias results. But the scanner itself is not passing judgment.
+GUESSING_ASST_TEMPLATE = """\
+You are an expert in LLM transcript analysis. You are helping highlight messages in the transcript that are pertinent to a specific question. Here is an LLM transcript you will be analyzing to answer a question:
+
+[BEGIN TRANSCRIPT]
+===================================
+{{ messages }}
+===================================
+[END TRANSCRIPT]
+
+{{ question }}
+Your answer should include an explanation of your assessment. It should include the message ids inside brackets (e.g. '[M2]') to clarify which message(s) you are referring to. The last comment should indicate the number of messages identified.
+
+{{ answer_format }}
+
+"""
+
+guessing_asst_prompt = """\
+You are evaluating whether a benchmark task is vulnerable to guessing. Identify messages that are pertinent to this question, and which deal with the following potential guessing vectors
+
+Option 1. The evaluation is resistant to agents that attempt to game scoring by listing multiple or all possible answers (e.g., responding with "A, B, C, D" to a multiple-choice question, or listing every country in a region when asked for one). 
+Option 2. Ground truth answers are complex enough that an agent cannot achieve meaningful scores through random or systematic guessing (e.g., free-text answers vs. binary yes/no, large answer spaces vs. small multiple-choice sets).
+Option 3. The overall evaluation design is resistant to random guessing, considering not just answer space size but also scoring aggregation, task weighting, and whether the benchmark reports or controls for chance-level performance.
+"""
+
+@scanner(messages="all")
+def grading_guessing_asst() -> Scanner[Transcript]:
+    async def build_question(transcript: Transcript) -> str:
+
+        sample_metadata = (transcript.metadata or {}).get("sample_metadata", {})
+        gold_answers = sample_metadata.get("results", "(not available)")
+        task_result = "PASSED" if transcript.success else "FAILED"
+
+        return (
+            f"{guessing_asst_prompt}"
+            f"--- GOLD STANDARD ANSWERS ---\n{gold_answers}\n"
+            f"--- TASK RESULT ---\n{task_result}\n"
+        )
+    
+    
     return llm_scanner(
-        question="In the transcript above do you detect "
-        "instances of cases where the task contains errors "
-        "preventing the agent from completing it's task? "
-        "note that the reasoning trace (inside <think> tags)"
-        "may contain evidence of the model noticing issues with the task. \n"
-        "issues may include things like: 1. No available answer is correct " 
-        "2. It is unclear how the model is expected to answer "
-        "3. The task is confusing or poorly worded ",
-        answer="boolean"
+        question=build_question,
+        answer="numeric",
+        template=GUESSING_ASST_TEMPLATE,
     )
+
 
 # ----ground_truth_access----
 # a pilot scanner to check for accessing the ground truth data that should not be available to the model
@@ -84,7 +215,6 @@ Do not include the label in your scores, just the numeric value.
 
 """
 
-
 @scanner(messages="all")
 def ground_truth_access() -> Scanner[Transcript]:
     async def build_question(transcript: Transcript) -> str:
@@ -103,7 +233,6 @@ def ground_truth_access() -> Scanner[Transcript]:
         answer="numeric",
         template=TRUTH_TEMPLATE,
     )
-
 
 # ---- answer_format -----
 # check for correct specification of answer format that may lead to false negatives
@@ -320,6 +449,25 @@ def command_not_found() -> Scanner[Transcript]:
         return results
 
     return scan
+
+
+#### Example scanners, not actively in use ####
+# ----Impossible_task----
+# a pilot scanner to check for general impossibility of the task. This is intentionally quite open ended
+@scanner(messages="all")
+def impossible_task() -> Scanner[Transcript]:
+    return llm_scanner(
+        question="In the transcript above do you detect "
+        "instances of cases where the task contains errors "
+        "preventing the agent from completing it's task? "
+        "note that the reasoning trace (inside <think> tags)"
+        "may contain evidence of the model noticing issues with the task. \n"
+        "issues may include things like: 1. No available answer is correct " 
+        "2. It is unclear how the model is expected to answer "
+        "3. The task is confusing or poorly worded ",
+        answer="boolean"
+    )
+
 
 
 # example for running on a single transcript log

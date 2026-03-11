@@ -21,7 +21,7 @@ build/
 # Data
 logs
 scans
-hf_data
+#hf_data
 *.csv
 *.json*
 *.parquet

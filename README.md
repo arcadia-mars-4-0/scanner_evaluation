@@ -1,11 +1,27 @@
 # Scanner Evaluation
-This repo contains the reserach code for the evaluation of benchmarks using scanners inspired by the [Agentic Benchmark Checklist](https://arxiv.org/abs/2507.02825).
+This repo contains the research code for the evaluation of benchmarks using scanners inspired by the [Agentic Benchmark Checklist](https://arxiv.org/abs/2507.02825).
 
 It currently contains 4 primary sections:
 - `sample_size/` contains code used in the calculation of sample size requirements performed ahead of data collection
 - `analysis/` contains working analysis code, and pre-processed data supporting analysis
 - `eval_grading/` contains code to support human labeling of eval transcripts, and is also used as the working directory for intermediate datafiles that have not been completed and added to the huggingface repo.
 - `evals/` mirrors the huggingface repo, and is used to manage final data collection. 
+
+## Environment Setup
+This project uses supports [UV](https://docs.astral.sh/uv/) for environment and dependency management.
+
+Create the project virtual environment and install dependencies:
+
+```bash
+uv venv
+uv sync
+```
+
+Run project scripts through UV so they use the synced environment:
+
+```bash
+uv run python evals/hf_dataset_sync.py pull
+```
 
 ## Eval Grading
 The basic workflow is to use the evals directory mirror from hugging face as the source for final datasets, and the eval grading directory for work in progress grading. Scanner files should generally not be tracked in this directory while iterating. Instead, scan and validation files should be moved into evals and pushed to HF after completion. This helps maintain a separation between final data files and intermediate files. Analysis code uses the HF files as the source of truth.
@@ -25,7 +41,7 @@ Data is organized by evaluation (e.g., core_bench) and split into transcript log
 The main entrypoint is:
 
 ```bash
-python evals/hf_dataset_sync.py
+uv run python evals/hf_dataset_sync.py
 ```
 
 It uses `evals/` as the local dataset root.
@@ -35,13 +51,13 @@ It uses `evals/` as the local dataset root.
 Pull the full dataset into `evals/`:
 
 ```bash
-python evals/hf_dataset_sync.py pull
+uv run python evals/hf_dataset_sync.py pull
 ```
 
 Pull a single eval subtree:
 
 ```bash
-python evals/hf_dataset_sync.py pull xstest
+uv run python evals/hf_dataset_sync.py pull xstest
 ```
 This downloads the remote dataset structure directly under `evals/`, for example:
 
@@ -58,7 +74,7 @@ evals/
 Push one local eval directory back to the dataset:
 
 ```bash
-python evals/hf_dataset_sync.py push xstest
+uv run python evals/hf_dataset_sync.py push xstest
 ```
 
 This uploads data from:
@@ -78,5 +94,5 @@ By default, push uploads the full local `scan-results/` tree as-is.
 If you want to place results under `scan-results/<scanner_name>/` remotely, pass `--scanner-name`:
 
 ```bash
-python evals/hf_dataset_sync.py push xstest --scanner-name my-scanner
+uv run python evals/hf_dataset_sync.py push xstest --scanner-name my-scanner
 ```

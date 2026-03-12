@@ -27,5 +27,8 @@ scans
 *.parquet
 *.eval
 
+#archived code
+scanner_pilot/
+
 #exception for validation csvs
 !evals/**/*.csv

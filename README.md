@@ -23,6 +23,18 @@ Run project scripts through UV so they use the synced environment:
 uv run python evals/hf_dataset_sync.py pull
 ```
 
+## Using Scout
+
+After installing the dependencies, Inspect Scout will be available to use in the repo.
+To view the UI:
+
+```bash
+uv run scout view
+```
+
+All other relevant scout commands (including pointing at particular directories) can be found in their documentation:
+https://meridianlabs-ai.github.io/inspect_scout/
+
 ## Eval Grading
 The basic workflow is to use the evals directory mirror from hugging face as the source for final datasets, and the eval grading directory for work in progress grading. Scanner files should generally not be tracked in this directory while iterating. Instead, scan and validation files should be moved into evals and pushed to HF after completion. This helps maintain a separation between final data files and intermediate files. Analysis code uses the HF files as the source of truth.
 

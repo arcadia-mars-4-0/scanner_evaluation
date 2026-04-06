@@ -19,7 +19,7 @@ eval(
     task, 
     model="openai/gpt-5.4-2026-03-05",
     log_dir=LOG_DIR,
-    model_roles={'user': 'gpt-4.1-2025-04-14'}
+    model_roles={'user': 'openai/gpt-4.1-2025-04-14'}
 ) 
 #Model options
 # gpt-5.4-2026-03-05

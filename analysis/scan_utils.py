@@ -492,8 +492,17 @@ def materialize_targets(
     *,
     scanner_key: str,
     violation_threshold: float = 2,
+    human_labels_long: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    """Create transcript-level targets for one scanner based on subset rules."""
+    """Create transcript-level targets for one scanner based on subset rules.
+
+    Human-mode rules can specify targets in two ways:
+
+    1. **Long-format lookup** (preferred): provide ``criteria``, ``benchmark``,
+       and ``labeler`` to select rows from *human_labels_long*.
+    2. **Wide-format column** (legacy): provide ``label_name`` referencing a
+       column already present in *comparison*.
+    """
     if scanner_key not in comparison.columns:
         raise KeyError(f"Scanner column not found in comparison table: {scanner_key}")
 
@@ -520,20 +529,59 @@ def materialize_targets(
         mode = resolved_rule.get("mode")
 
         if mode == "human":
-            label_name = resolved_rule["label_name"]
-            if label_name not in target_frame.columns:
-                raise KeyError(
-                    f"Target rule for subset '{subset}' references missing human label "
-                    f"column '{label_name}'"
+            if "criteria" in resolved_rule:
+                # Long-format lookup by criteria + benchmark + labeler
+                if human_labels_long is None:
+                    raise ValueError(
+                        f"Target rule for subset '{subset}' uses criteria/labeler "
+                        "but no human_labels_long DataFrame was provided."
+                    )
+                label_filter = human_labels_long[
+                    (human_labels_long["criteria"] == resolved_rule["criteria"])
+                    & (human_labels_long["benchmark"] == resolved_rule["benchmark"])
+                ]
+                if "labeler" in resolved_rule:
+                    label_filter = label_filter[
+                        label_filter["labeler"] == resolved_rule["labeler"]
+                    ]
+                label_key = (
+                    f"{resolved_rule['criteria']}"
+                    f"_{resolved_rule['benchmark']}"
+                    f"_{resolved_rule.get('labeler', '*')}"
                 )
-            labels = pd.to_numeric(target_frame.loc[subset_mask, label_name], errors="coerce")
-            target_frame.loc[subset_mask, "target"] = pd.Series(
-                np.where(labels.isna(), pd.NA, labels.ge(violation_threshold)),
-                index=target_frame.loc[subset_mask].index,
-                dtype="boolean",
-            )
-            target_frame.loc[subset_mask, "target_source"] = "human"
-            target_frame.loc[subset_mask, "target_label_name"] = label_name
+                # Merge the filtered labels onto the subset rows
+                subset_idx = target_frame.index[subset_mask]
+                merged = target_frame.loc[subset_idx, ["transcript_id", "benchmark"]].merge(
+                    label_filter[["transcript_id", "benchmark", "target"]].rename(
+                        columns={"target": "_human_target"}
+                    ),
+                    on=["transcript_id", "benchmark"],
+                    how="left",
+                )
+                labels = pd.to_numeric(merged["_human_target"], errors="coerce")
+                target_frame.loc[subset_idx, "target"] = pd.Series(
+                    np.where(labels.isna(), pd.NA, labels.ge(violation_threshold)),
+                    index=subset_idx,
+                    dtype="boolean",
+                )
+                target_frame.loc[subset_idx, "target_source"] = "human"
+                target_frame.loc[subset_idx, "target_label_name"] = label_key
+            else:
+                # Legacy wide-format column lookup
+                label_name = resolved_rule["label_name"]
+                if label_name not in target_frame.columns:
+                    raise KeyError(
+                        f"Target rule for subset '{subset}' references missing human label "
+                        f"column '{label_name}'"
+                    )
+                labels = pd.to_numeric(target_frame.loc[subset_mask, label_name], errors="coerce")
+                target_frame.loc[subset_mask, "target"] = pd.Series(
+                    np.where(labels.isna(), pd.NA, labels.ge(violation_threshold)),
+                    index=target_frame.loc[subset_mask].index,
+                    dtype="boolean",
+                )
+                target_frame.loc[subset_mask, "target_source"] = "human"
+                target_frame.loc[subset_mask, "target_label_name"] = label_name
         elif mode == "uniform":
             positive_rate = resolved_rule.get("positive_rate")
             if positive_rate not in {0, 0.0, 1, 1.0}:

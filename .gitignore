@@ -29,6 +29,8 @@ scans
 
 #Eval grading data
 eval_grading/**/scan-results
+scanner_dev/ground_truth/scan-results
+scanner_dev/ground_truth/build/**
 #archived code
 scanner_pilot/
 eval_grading/**/**/validation-archive
@@ -36,3 +38,6 @@ eval_grading/**/**/validation-archive
 #exception for validation csvs
 !evals/**/*.csv
 !eval_grading/**/*.csv
+!scanner_dev/ground_truth/build/
+!scanner_dev/ground_truth/build/**/*.csv
+!scanner_dev/**/*.csv

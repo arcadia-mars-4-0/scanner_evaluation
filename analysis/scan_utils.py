@@ -61,7 +61,8 @@ def load_eval_logs(
                     score_val = score_val.get(score_key)
                 rows.append(
                     {
-                        "transcript_id": summary["uuid"],
+                        # Some converted eval logs only retain the sample id.
+                        "transcript_id": summary.get("uuid", str(summary["id"])),
                         "task_id": summary["id"],
                         "transcript_score": score_val,
                         "transcript_success": check_success(score_val),

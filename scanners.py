@@ -512,6 +512,90 @@ def guessing() -> Scanner[Transcript]:
         template=GUESSING_TEMPLATE,
     )
 
+# ---- tool_access -----
+# LLM scanner for T.2: Required tools are consistently accessible during evaluation.
+# Looks at all tool calls and their outputs to assess whether required tools were
+# reliably available. Only flags failures with tools that are required for the task.
+
+TOOL_ACCESS_TEMPLATE = """\
+{{ question }}
+
+Your answer should include an explanation of your assessment. It should include the message id's (e.g. '[M2]') to clarify which message(s) you are referring to.
+
+{{ answer_format }}"""
+
+tool_access_prompt = """\
+You are evaluating whether required tools and external services were reliably accessible during an agent evaluation.
+
+Your job: Assess whether all tools and external services required by the benchmark are reliably available throughout the evaluation session, without intermittent failures, timeouts, or access restrictions that could confound results.
+
+Important: Only consider failures with tools that are REQUIRED for the task. Do not penalise for failures with tools the agent attempts to use but that are not required (e.g., attempting web search when it is not enabled).
+
+Report your answer as a number between 0 (no issues) and 3 (clear issue). Guidance for these scores is:
+Score = 0, No Evidence: All required tools and services are fully and reliably accessible throughout the evaluation. No evaluation results are confounded by access issues.
+Score = 1, Potential: Minor or ambiguous evidence of tool/service access problems. Rare failures are observed but it is unclear whether they affected evaluation outcomes.
+Score = 2, Clear: Noticeable tool/service access failures that plausibly affect evaluation validity, but the agent is able to work around these to complete the task.
+Score = 3, Impactful: Systematic tool access failures. One or more required tools (especially things like external APIs or data sources) are frequently unavailable or entirely inaccessible, leading to agent failure.
+
+Key evidence to look for:
+- Required APIs, datasources, or websites are inaccessible or no longer exist
+- Repeated tool call errors (connection errors, timeouts, HTTP 4xx/5xx, permission errors)
+- Agent explicitly rerouting around a tool failure (e.g., "I can't get this tool to work, so I'll just make something up")
+- Whether tool failures necessarily lead to task failure
+
+Do not include the label in your scores, just the numeric value.
+"""
+
+@scanner(messages="all")
+def tool_access() -> Scanner[Transcript]:
+
+    async def build_question(transcript: Transcript) -> str:
+        system_text = "\n".join(
+            m.text for m in transcript.messages if m.role == "system"
+        )
+        user_text = "\n".join(
+            m.text for m in transcript.messages if m.role == "user"
+        )
+        task_result = "PASSED" if transcript.success else "FAILED"
+
+        # Build a chronological view of all tool interactions so the LLM can
+        # identify errors, repeated failures, and agent rerouting behaviour.
+        tool_lines: list[str] = []
+        for i, m in enumerate(transcript.messages):
+            mid = f"[M{i}]"
+
+            if m.role == "assistant":
+                # Extract tool calls embedded in the assistant content block
+                if isinstance(m.content, list):
+                    for c in m.content:
+                        if getattr(c, "type", None) == "tool_call":
+                            fn = getattr(c, "function", "?")
+                            args = str(getattr(c, "arguments", ""))[:200]
+                            tool_lines.append(f"{mid} TOOL CALL: {fn}({args})")
+
+            elif m.role == "tool":
+                fn = getattr(m, "function", None) or "(unknown)"
+                output = m.text or "(empty)"
+                tool_lines.append(f"{mid} TOOL OUTPUT ({fn}):\n{output}")
+
+        tool_context = "\n\n".join(tool_lines) or "(no tool interactions found)"
+        score = transcript.score
+
+        return (
+            f"{tool_access_prompt}"
+            f"--- SYSTEM PROMPT (tools provided to agent) ---\n{system_text}\n\n"
+            f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
+            f"--- TOOL INTERACTIONS (all calls and outputs) ---\n{tool_context}\n\n"
+            f"--- TASK RESULT ---\n{task_result}\n"
+            f"--- SCORE ---\n{score}\n"
+        )
+
+    return llm_scanner(
+        question=build_question,
+        answer="numeric",
+        template=TOOL_ACCESS_TEMPLATE,
+    )
+
 # ---- Command_not_found -----
 # This is an example scanner from the Scout documentation that looks for tool use failures
 # This is currently standing in for T.2: tool errors
@@ -520,6 +604,7 @@ class CommandNotFound(BaseModel):
     message_id: str = Field(description="Message that made the tool call.")
     command: str = Field(description="The command that was not found.")
     tool: str | None = Field(description="Tool that produced the output.")
+
 
 @scanner(messages="all")
 def command_not_found() -> Scanner[Transcript]:

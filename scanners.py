@@ -12,6 +12,7 @@ To run: from the evals directory run: scout scan scout.yaml
 can use scan_results_df("file_path_to_scan") to make a pandas dataframe from the scanner results
 """
 
+import json
 import re
 
 from pydantic import BaseModel, Field
@@ -28,6 +29,226 @@ from inspect_scout import (
 )
 
 ## ----------- Helpers ---------
+
+def get_task_result(transcript: Transcript) -> str:
+    """Return 'PASSED', 'FAILED', or 'UNKNOWN' for the transcript.
+
+    Prefers the explicit ``transcript.success`` boolean when available.
+    Falls back to ``transcript.score`` when ``success`` is None, which
+    happens for benchmarks whose scorer returns a dict/list value (e.g.
+    CORE-bench) — in those cases inspect_scout cannot reduce the score to
+    a boolean automatically, so it leaves ``success`` as None even though
+    the sample may be correct.
+    """
+    if transcript.success is True:
+        return "PASSED"
+    if transcript.success is False:
+        return "FAILED"
+    # success is None — try to infer from the extracted score value
+    score = transcript.score
+    if isinstance(score, bool):
+        return "PASSED" if score else "FAILED"
+    if isinstance(score, (int, float)):
+        return "PASSED" if float(score) > 0 else "FAILED"
+    if isinstance(score, str):
+        upper = score.strip().upper()
+        # inspect_ai convention: "C" = correct, "I" = incorrect
+        if upper in ("C", "CORRECT", "1", "TRUE", "YES", "PASS", "PASSED", "P"):
+            return "PASSED"
+        if upper in ("I", "INCORRECT", "0", "FALSE", "NO", "FAIL", "FAILED", "F"):
+            return "FAILED"
+        # numeric string
+        try:
+            return "PASSED" if float(upper) > 0 else "FAILED"
+        except ValueError:
+            pass
+    if score is not None:
+        return f"SCORE: {score}"
+    return "UNKNOWN"
+
+
+def _fmt_args(arguments) -> str:
+    """Format tool arguments (dict or string) for display."""
+    if isinstance(arguments, dict):
+        try:
+            return json.dumps(arguments, indent=2)
+        except Exception:
+            return str(arguments)
+    return str(arguments) if arguments is not None else "(none)"
+
+
+def _indent(text: str, spaces: int) -> str:
+    """Indent every line of text by the given number of spaces."""
+    pad = " " * spaces
+    return "\n".join(pad + line for line in str(text).splitlines())
+
+
+def get_tool_interactions(transcript: Transcript) -> str:
+    """Build a comprehensive chronological view of all tool interactions.
+
+    Handles three formats found in inspect_ai transcripts:
+    - ``tool_calls`` attribute on assistant messages (standard ToolCall objects)
+    - ``type="tool_use"`` content items in assistant messages (web-search / browser)
+    - ``role="tool"`` messages (results/errors for standard tool calls)
+    """
+    # Pre-index tool result messages by tool_call_id so we can emit them
+    # inline immediately after the matching tool call.
+    tool_results: dict[str, tuple[int, object]] = {}
+    for i, m in enumerate(transcript.messages):
+        if m.role == "tool":
+            tcid = getattr(m, "tool_call_id", None)
+            if tcid:
+                tool_results[tcid] = (i, m)
+
+    def emit_tool_result(tc_id: str) -> list[str]:
+        """Return lines for the tool result matching tc_id, or empty list."""
+        entry = tool_results.get(tc_id)
+        if entry is None:
+            return []
+        ridx, rm = entry
+        error = getattr(rm, "error", None)
+        result = getattr(rm, "result", None)
+        out = [f"  result [M{ridx}]:"]
+        if error:
+            err_type = getattr(error, "type", "unknown") if not isinstance(error, str) else "unknown"
+            err_msg = getattr(error, "message", None) or str(error)
+            out.append(f"    error: [{err_type}] {err_msg}")
+        else:
+            content = result or getattr(rm, "text", None) or "(empty)"
+            out.append(f"    {str(content)[:2000]}")
+        return out
+
+    lines: list[str] = []
+
+    for i, m in enumerate(transcript.messages):
+        mid = f"[M{i}]"
+
+        if m.role == "assistant":
+            tool_calls = getattr(m, "tool_calls", None) or []
+            content_list = m.content if isinstance(m.content, list) else []
+            has_tool_activity = bool(tool_calls) or any(
+                getattr(c, "type", None) in ("tool_use", "tool_call") for c in content_list
+            )
+
+            # Emit assistant text/reasoning when the message also has tool activity.
+            if has_tool_activity and content_list:
+                text_parts: list[str] = []
+                for c in content_list:
+                    ctype = getattr(c, "type", None)
+                    if ctype == "text":
+                        text = getattr(c, "text", "") or ""
+                        if text.strip():
+                            text_parts.append(text)
+                    elif ctype == "reasoning":
+                        if getattr(c, "redacted", False):
+                            reasoning = getattr(c, "summary", None) or "REDACTED"
+                        else:
+                            reasoning = getattr(c, "reasoning", "") or ""
+                        if reasoning.strip():
+                            text_parts.append(f"[reasoning] {reasoning}")
+                if text_parts:
+                    combined = "\n  ".join(
+                        "\n  ".join(p.splitlines()) for p in text_parts
+                    )
+                    lines.append(
+                        f"{mid} ASSISTANT TEXT"
+                        f"  (model={getattr(m, 'model', '?')}, source={getattr(m, 'source', '?')})"
+                        f"\n  {combined}"
+                    )
+
+            # --- Standard tool_calls attribute — emit call + result together ---
+            for tc in tool_calls:
+                block = [
+                    f"{mid} TOOL CALL: {tc.function}"
+                    f"  (id={tc.id}, type={getattr(tc, 'type', None) or 'function'},"
+                    f" model={getattr(m, 'model', '?')}, source={getattr(m, 'source', '?')})",
+                    f"  arguments:\n{_indent(_fmt_args(tc.arguments), 4)}",
+                ]
+                if getattr(tc, "parse_error", None):
+                    block.append(f"  parse_error: {tc.parse_error}")
+                block.extend(emit_tool_result(tc.id))
+                lines.append("\n".join(block))
+
+            # --- Content-item tool_use / tool_call blocks (result already inline) ---
+            for c in content_list:
+                ctype = getattr(c, "type", None)
+
+                if ctype == "tool_use":
+                    tool_type = getattr(c, "tool_type", None) or "unknown"
+                    name = getattr(c, "name", None) or getattr(c, "function", "?")
+                    cid = getattr(c, "id", "?")
+                    args = _fmt_args(getattr(c, "arguments", None))
+                    result = getattr(c, "result", None)
+                    error = getattr(c, "error", None)
+                    block = [
+                        f"{mid} TOOL USE: {name}"
+                        f"  (tool_type={tool_type}, id={cid})",
+                        f"  arguments:\n{_indent(args, 4)}",
+                    ]
+                    if error:
+                        err_type = getattr(error, "type", "unknown") if not isinstance(error, str) else "unknown"
+                        err_msg = getattr(error, "message", None) or str(error)
+                        block.append(f"  error: [{err_type}] {err_msg}")
+                    else:
+                        result_str = str(result) if result is not None else "(empty)"
+                        result_str = "(response not provided by model provider)" if result_str == "" else result_str
+                        block.append(f"  result: {result_str[:2000]}")
+                    lines.append("\n".join(block))
+
+                elif ctype == "tool_call":
+                    fn = getattr(c, "function", "?")
+                    cid = getattr(c, "id", "?")
+                    args = _fmt_args(getattr(c, "arguments", None))
+                    block = [
+                        f"{mid} TOOL CALL (content block): {fn}  (id={cid})",
+                        f"  arguments:\n{_indent(args, 4)}",
+                    ]
+                    block.extend(emit_tool_result(cid))
+                    lines.append("\n".join(block))
+
+        # role="tool" messages are emitted inline above; skip them here.
+
+    return "\n\n".join(lines) if lines else "(no tool interactions found)"
+
+
+def get_tools_by_model(transcript: Transcript) -> str:
+    """Return a formatted listing of tool names available to each model.
+
+    Scans all model events in the transcript, collects the unique tool names
+    seen for each model (tools can be added dynamically mid-run), and formats
+    the result as a labelled block per model.
+
+    Returns '(not available)' if no model events with tools are found.
+    """
+    # model name → ordered list of unique tool names across all its calls
+    model_tools: dict[str, list[str]] = {}
+    model_seen: dict[str, set[str]] = {}
+
+    for event in transcript.events:
+        if getattr(event, "event", None) != "model":
+            continue
+        model = getattr(event, "model", None) or "unknown"
+        tools = getattr(event, "tools", None)
+        if not tools:
+            continue
+        if model not in model_tools:
+            model_tools[model] = []
+            model_seen[model] = set()
+        for t in tools:
+            name = (t.get("name") if isinstance(t, dict) else getattr(t, "name", None)) or "?"
+            if name not in model_seen[model]:
+                model_seen[model].add(name)
+                model_tools[model].append(name)
+
+    if not model_tools:
+        return "(not available)"
+
+    parts: list[str] = []
+    for model, names in model_tools.items():
+        tool_list = "\n".join(f"  - {n}" for n in names)
+        parts.append(f"Model: {model}\n{tool_list}")
+    return "\n\n".join(parts)
+
 
 def get_gold_answers(transcript: Transcript) -> str:
     """Extract gold standard answers from transcript metadata.
@@ -525,28 +746,37 @@ Your answer should include an explanation of your assessment. It should include 
 {{ answer_format }}"""
 
 tool_access_prompt = """\
-You are evaluating whether required tools and external services were reliably accessible during an agent evaluation.
+You are evaluating whether tools and external services were reliably accessible during an agent evaluation.
 
-Your job: Assess whether all tools and external services required by the benchmark are reliably available throughout the evaluation session, without intermittent failures, timeouts, or access restrictions that could confound results.
+Your job: Assess whether the tools and external services required by the benchmark are reliably available throughout the evaluation session, without intermittent failures, timeouts, or access restrictions that could confound results.
 
-Important: Only consider failures with tools that are REQUIRED for the task. Do not penalise for failures with tools the agent attempts to use but that are not required (e.g., attempting web search when it is not enabled).
+Important: Do not penalise for failures with tools the agent attempts to use but that are not required (e.g., attempting web search when it is not enabled).
 
-Report your answer as a number between 0 (no issues) and 3 (clear issue). Guidance for these scores is:
-Score = 0, No Evidence: All required tools and services are fully and reliably accessible throughout the evaluation. No evaluation results are confounded by access issues.
-Score = 1, Potential: Minor or ambiguous evidence of tool/service access problems. Rare failures are observed but it is unclear whether they affected evaluation outcomes.
-Score = 2, Clear: Noticeable tool/service access failures that plausibly affect evaluation validity, but the agent is able to work around these to complete the task.
-Score = 3, Impactful: Systematic tool access failures. One or more required tools (especially things like external APIs or data sources) are frequently unavailable or entirely inaccessible, leading to agent failure.
+Some tool calls do not return data and will have an accompanying assistant message response, which should be considered part of the tool interaction and may contain relevant information. Be sure to consider these when assessing the impact of any tool failures.
 
 Key evidence to look for:
-- Required APIs, datasources, or websites are inaccessible or no longer exist
-- Repeated tool call errors (connection errors, timeouts, HTTP 4xx/5xx, permission errors)
+- Required APIs, datasources, or websites are inaccessible or no longer exist.
+- Any tool call errors (connection errors, server-side timeouts, HTTP 4xx/5xx errors, permission errors) should be a 2 or higher, and should be a 3 if the task is failed. Note that a single failure is sufficient for a 2 or 3 rating. The task failure also does not need to due to any tool issue, just that a tool failure occurred at some point and the task was failed.
+- Repeated tool call failures with a required tool, even if not all calls fail.
 - Agent explicitly rerouting around a tool failure (e.g., "I can't get this tool to work, so I'll just make something up")
-- Whether tool failures necessarily lead to task failure
+- Whether tool failures necessarily lead to task failure.
+
+Note:
+A tool error that is due to the agent's own misuse (e.g., wrong API parameters) should not be scored as a tool access failure, unless the misuse is due to ambiguity in the prompt or documentation that makes it likely other agents would make the same mistake. For example:
+- If the prompt instructs the agent to "use the web search tool to look up the current population of France", but does not specify the tool name, parameters, or expected output format, and the agent attempts to call the wrong tool or uses incorrect parameters leading to an error
+- A bash tool fails due to specifying a timeout parameter that does not exist
+- A search query fails because there are no results, which is an invalid query rather than an access issue
+
+Report your answer as a number between 0 (no violation) and 3 (clear violation). Guidance for these scores is:
+Score = 0, No Evidence: All required tools and services are fully and reliably accessible throughout the evaluation. No evaluation results are confounded by access issues.
+Score = 1, Potential: Minor or ambiguous evidence of tool/service access problems.
+Score = 2, Clear: Noticeable tool/service access failures that plausibly affect evaluation validity, but the agent is able to work around these to complete the task.
+Score = 3, Impactful: At least one tool failure occurred, and the agent fails the task. Only one failure with a required tool is sufficient for a score of 3.
 
 Do not include the label in your scores, just the numeric value.
 """
 
-@scanner(messages="all")
+@scanner(messages="all", events=["model"])
 def tool_access() -> Scanner[Transcript]:
 
     async def build_question(transcript: Transcript) -> str:
@@ -556,38 +786,18 @@ def tool_access() -> Scanner[Transcript]:
         user_text = "\n".join(
             m.text for m in transcript.messages if m.role == "user"
         )
-        task_result = "PASSED" if transcript.success else "FAILED"
+        task_result = get_task_result(transcript)
 
-        # Build a chronological view of all tool interactions so the LLM can
-        # identify errors, repeated failures, and agent rerouting behaviour.
-        tool_lines: list[str] = []
-        for i, m in enumerate(transcript.messages):
-            mid = f"[M{i}]"
-
-            if m.role == "assistant":
-                # Extract tool calls embedded in the assistant content block
-                if isinstance(m.content, list):
-                    for c in m.content:
-                        if getattr(c, "type", None) == "tool_call":
-                            fn = getattr(c, "function", "?")
-                            args = str(getattr(c, "arguments", ""))[:200]
-                            tool_lines.append(f"{mid} TOOL CALL: {fn}({args})")
-
-            elif m.role == "tool":
-                fn = getattr(m, "function", None) or "(unknown)"
-                output = m.text or "(empty)"
-                tool_lines.append(f"{mid} TOOL OUTPUT ({fn}):\n{output}")
-
-        tool_context = "\n\n".join(tool_lines) or "(no tool interactions found)"
-        score = transcript.score
+        tool_context = get_tool_interactions(transcript)
+        tools_available = get_tools_by_model(transcript)
 
         return (
             f"{tool_access_prompt}"
-            f"--- SYSTEM PROMPT (tools provided to agent) ---\n{system_text}\n\n"
+            f"--- TOOLS AVAILABLE TO AGENT ---\n{tools_available}\n\n"
+            f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
             f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
             f"--- TOOL INTERACTIONS (all calls and outputs) ---\n{tool_context}\n\n"
             f"--- TASK RESULT ---\n{task_result}\n"
-            f"--- SCORE ---\n{score}\n"
         )
 
     return llm_scanner(

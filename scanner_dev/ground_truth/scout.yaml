@@ -7,7 +7,7 @@ scans: ./scan-results
 
 scanners:
   - name: ground_truth_access
-    file: ../../scanners.py
+    file: ./gt_scanner.py
   # - name: answer_format
   #   file: ../../scanners.py
   # - name: guessing
@@ -16,6 +16,6 @@ scanners:
 validation:
   ground_truth_access: ./dev_t5_validation.csv
 
-model: openai/gpt-5.4
+model: openai/gpt-5.4 #openai/gpt-5.4 anthropic/claude-sonnet-4-6
 generate_config:
   max_connections: 50

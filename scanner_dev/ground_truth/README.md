@@ -70,8 +70,6 @@ Important: Scout `validation:` does not filter which transcripts are scanned. It
 
 That means transcript selection happens in the build step, not in `scout scan`.
 
-If you want validation active for the scan results, uncomment this line in [scout.yaml](/home/jeffm/projects/scanner_evaluation/scanner_dev/ground_truth/scout.yaml):
-
 ```yaml
 validation:
   ground_truth_access: ./dev_t5_validation.csv

@@ -299,7 +299,10 @@ def write_validation_csv(rows: list[ManifestRow], output_path: Path) -> int:
     )
 
     if not validation_files:
-        raise ValueError("Manifest does not include any validation files.")
+        print(
+            f"Warning: no validation files in selected manifest rows; "
+            f"writing header-only {repo_relative(output_path)}"
+        )
 
     for validation_path in validation_files:
         with validation_path.open(newline="") as handle:

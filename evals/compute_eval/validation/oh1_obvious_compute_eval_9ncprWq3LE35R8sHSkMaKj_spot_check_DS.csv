@@ -1,0 +1,16 @@
+id,target,predicate,notes
+2fRRiFAnKhzPXhvx3xdDWT,2,eq,System prompt provide minimal hints for output format but it indicates that the model is supposed to output only the final code files w/o analysis or explanations which could be enough for this problem. On the other hand the prompt also suggest the model to use the submit tool but it seems like the model output text is used as an answer.
+2jZhBFejHPKpJBHjmkbAwP,2,eq,The model answer seems to be parsed correctly but the model was just lucky to provide a correct formatting.
+2sv25kaXUqZbpyCvEwUgsK,2,eq,Same as above.
+2uN54UjAEdAtW3hNGHvDjm,2,eq,Same as above.
+2wkeSZiFj4Q94wdnTfcbLh,2,eq,Same
+3oNVwKwp2g75yDegAU9qFe,2,eq,The prompt suggest the model to use the submit tool but it seems like the model output text is used as an answer.
+3wUC3a3xxtmm8Ldfw5S68k,2,eq,The prompt suggest the model to use the submit tool but it seems like the model output text is used as an answer.
+4PiUAi5zNiP9koP8b4GimR,2,eq,The model answer seems to be parsed correctly but the model was just lucky to provide a correct formatting.
+4fmnyZdW7gytQd88PZqU8X,2,eq,The model answer seems to be parsed correctly but the model was just lucky to provide a correct formatting.
+4xX4iHphz4cr3ZttWBK7xE,2,eq,The prompt suggest the model to use the submit tool but it seems like the model output text is used as an answer.
+5R9onKggx4xTnZpg6QQdAg,2,eq,The prompt suggest the model to use the submit tool but it seems like the model output text is used as an answer.
+5WkqFvvQa3n33sXSwMybLo,2,eq,The prompt suggest the model to use the submit tool but it seems like the model output text is used as an answer.
+5YnGqGR4JHurS5DPK8ny6F,2,eq,The prompt suggest the model to use the submit tool but it seems like the model output text is used as an answer.
+5paZZYKhAA8xs8BZZstaeK,2,eq,The model answer seems to be parsed correctly but the model was just lucky to provide a correct formatting.
+6AEGsKvnPp2Hf5285c9sPU,2,eq,The model answer seems to be parsed correctly but the model was just lucky to provide a correct formatting.

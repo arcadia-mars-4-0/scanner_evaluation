@@ -62,9 +62,34 @@ def get_task_result(transcript: Transcript) -> str:
             return "PASSED" if float(upper) > 0 else "FAILED"
         except ValueError:
             pass
-    if score is not None:
-        return f"SCORE: {score}"
-    return "UNKNOWN"
+    if isinstance(score, dict):
+        # Look for a correctness indicator across common key names
+        for key in ("is_correct", "correct", "score", "value", "result"):
+            val = score.get(key)
+            if val is None:
+                continue
+            if isinstance(val, bool):
+                return "PASSED" if val else "FAILED"
+            if isinstance(val, (int, float)):
+                return "PASSED" if float(val) > 0 else "FAILED"
+            if isinstance(val, str):
+                upper = val.strip().upper()
+                if upper in ("C", "CORRECT", "1", "TRUE", "YES", "PASS", "PASSED", "P"):
+                    return "PASSED"
+                if upper in ("I", "INCORRECT", "0", "FALSE", "NO", "FAIL", "FAILED", "F"):
+                    return "FAILED"
+                try:
+                    return "PASSED" if float(upper) > 0 else "FAILED"
+                except ValueError:
+                    pass
+        # No recognisable key — fall back to showing the raw dict
+    return "NOT REPORTED"
+
+def get_score_output(transcript: Transcript) -> str:
+    """Return a string representation of the transcript score."""
+    if transcript.score:
+        return str(transcript.score)
+    return "(not reported)"
 
 
 def _fmt_args(arguments) -> str:
@@ -191,7 +216,7 @@ def get_tool_interactions(transcript: Transcript) -> str:
                         block.append(f"  error: [{err_type}] {err_msg}")
                     else:
                         result_str = str(result) if result is not None else "(empty)"
-                        result_str = "(response not provided by model provider)" if result_str == "" else result_str
+                        result_str = "(tool completed but response not provided by model provider)" if result_str == "" else result_str
                         block.append(f"  result: {result_str[:2000]}")
                     lines.append("\n".join(block))
 
@@ -732,88 +757,6 @@ def guessing() -> Scanner[Transcript]:
         answer="numeric",
         template=GUESSING_TEMPLATE,
     )
-
-# ---- tool_access -----
-# LLM scanner for T.2: Required tools are consistently accessible during evaluation.
-# Looks at all tool calls and their outputs to assess whether required tools were
-# reliably available. Only flags failures with tools that are required for the task.
-
-TOOL_ACCESS_TEMPLATE = """\
-{{ question }}
-
-Your answer should include an explanation of your assessment. It should include the message id's (e.g. '[M2]') to clarify which message(s) you are referring to.
-
-{{ answer_format }}"""
-
-tool_access_prompt = """\
-You are evaluating whether tools and external services were reliably accessible during an agent evaluation.
-
-Your job: Assess whether the tools and external services required by the benchmark are reliably available throughout the evaluation session, without intermittent failures, timeouts, or access restrictions that could confound results.
-
-Important: Do not penalise for failures with tools the agent attempts to use but that are not required (e.g., attempting web search when it is not enabled).
-
-Some tool calls do not return data and will have an accompanying assistant message response, which should be considered part of the tool interaction and may contain relevant information. Be sure to consider these when assessing the impact of any tool failures.
-
-Key evidence to look for:
-- Required APIs, datasources, or websites are inaccessible or no longer exist.
-- Any tool call errors (connection errors, server-side timeouts, HTTP 4xx/5xx errors, permission errors) should be a 2 or higher, and should be a 3 if the task is failed. Note that a single failure is sufficient for a 2 or 3 rating. The task failure also does not need to due to any tool issue, just that a tool failure occurred at some point and the task was failed.
-- Repeated tool call failures with a required tool, even if not all calls fail.
-- Agent explicitly rerouting around a tool failure (e.g., "I can't get this tool to work, so I'll just make something up")
-- Whether tool failures necessarily lead to task failure.
-
-Note:
-A tool error that is due to the agent's own misuse (e.g., wrong API parameters) should not be scored as a tool access failure, unless the misuse is due to ambiguity in the prompt or documentation that makes it likely other agents would make the same mistake. For example:
-- If the prompt instructs the agent to "use the web search tool to look up the current population of France", but does not specify the tool name, parameters, or expected output format, and the agent attempts to call the wrong tool or uses incorrect parameters leading to an error
-- A bash tool fails due to specifying a timeout parameter that does not exist
-- A search query fails because there are no results, which is an invalid query rather than an access issue
-
-Report your answer as a number between 0 (no violation) and 3 (clear violation). Guidance for these scores is:
-Score = 0, No Evidence: All required tools and services are fully and reliably accessible throughout the evaluation. No evaluation results are confounded by access issues.
-Score = 1, Potential: Minor or ambiguous evidence of tool/service access problems.
-Score = 2, Clear: Noticeable tool/service access failures that plausibly affect evaluation validity, but the agent is able to work around these to complete the task.
-Score = 3, Impactful: At least one tool failure occurred, and the agent fails the task. Only one failure with a required tool is sufficient for a score of 3.
-
-Do not include the label in your scores, just the numeric value.
-"""
-
-@scanner(messages="all", events=["model"])
-def tool_access() -> Scanner[Transcript]:
-
-    async def build_question(transcript: Transcript) -> str:
-        system_text = "\n".join(
-            m.text for m in transcript.messages if m.role == "system"
-        )
-        user_text = "\n".join(
-            m.text for m in transcript.messages if m.role == "user"
-        )
-        task_result = get_task_result(transcript)
-
-        tool_context = get_tool_interactions(transcript)
-        tools_available = get_tools_by_model(transcript)
-
-        return (
-            f"{tool_access_prompt}"
-            f"--- TOOLS AVAILABLE TO AGENT ---\n{tools_available}\n\n"
-            f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
-            f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
-            f"--- TOOL INTERACTIONS (all calls and outputs) ---\n{tool_context}\n\n"
-            f"--- TASK RESULT ---\n{task_result}\n"
-        )
-
-    return llm_scanner(
-        question=build_question,
-        answer="numeric",
-        template=TOOL_ACCESS_TEMPLATE,
-    )
-
-# ---- Command_not_found -----
-# This is an example scanner from the Scout documentation that looks for tool use failures
-# This is currently standing in for T.2: tool errors
-
-class CommandNotFound(BaseModel):
-    message_id: str = Field(description="Message that made the tool call.")
-    command: str = Field(description="The command that was not found.")
-    tool: str | None = Field(description="Tool that produced the output.")
 
 
 @scanner(messages="all")

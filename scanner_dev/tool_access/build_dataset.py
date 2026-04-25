@@ -397,12 +397,12 @@ def main() -> None:
     validation_path = DEFAULT_VALIDATION_PATH
     provenance_path = build_dir / "dev_t2_provenance.csv"
 
-    staged_count = stage_eval_logs(rows, eval_logs_dir)
+    # staged_count = stage_eval_logs(rows, eval_logs_dir)
     validation_count = write_validation_csv(rows, validation_path)
     provenance_count = write_provenance_csv(rows, provenance_path)
 
     print(f"Manifest: {manifest_path}")
-    print(f"Staged eval logs: {staged_count}")
+    # print(f"Staged eval logs: {staged_count}")
     print(f"Eval log staging dir: {eval_logs_dir}")
     print(f"Merged validation rows: {validation_count}")
     print(f"Validation CSV: {validation_path}")

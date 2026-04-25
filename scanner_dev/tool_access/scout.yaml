@@ -2,16 +2,17 @@
 ## Rebuild ./build first:
 ##   uv run python scanner_dev/ground_truth/build_dataset.py
 
-transcripts: ./build/eval-logs
+transcripts: ./build/synthetic
 scans: ./scan-results
 
 scanners:
-- name: tool_access
-  file: ../../scanners.py
+  - name: tool_access
+    file: ./tool_access_scanner.py
 
 validation:
   tool_access: ./dev_t2_validation.csv
 
+# model: anthropic/claude-sonnet-4-6
 model: openai/gpt-5.4
 generate_config:
   max_connections: 50

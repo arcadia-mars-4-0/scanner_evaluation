@@ -1,6 +1,6 @@
 ## Scanner development staging config.
 ## Rebuild ./build first:
-##   uv run python scanner_dev/ground_truth/build_dataset.py
+##   uv run python scanner_dev/tool_access/build_dataset.py
 
 transcripts: ./build/synthetic
 scans: ./scan-results

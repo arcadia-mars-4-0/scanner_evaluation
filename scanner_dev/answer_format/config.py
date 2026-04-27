@@ -54,21 +54,11 @@ SCANNERS: list[dict] = [
 
 TARGET_RULES: dict[str, dict] = {
     # Human-labeled validation runs — use the merged validation CSV.
+    "2026-02-27T20-08-12+00-00_core-bench_ZvU684YYCTbNLk8jJyRdRM.eval": {"mode": "validation"},
     "2026-03-05T07-19-51+00-00_terminal-bench-2-0_EFZcEhAZEwRExw66VnVjVD.eval": {"mode": "validation"},
-    "2026-03-07T15-51-32+00-00_mle-bench_B4Erv6ATfMjJz6dQFXh3AH.eval": {"mode": "validation"},
-    "2026-03-21T09-34-42+00-00_mle-bench_awRHnzf67AWSZYtXs7q2bf.eval": {"mode": "validation"},
-    "2026-03-31T10-32-04+00-00_mle-bench_XNQHMCEb6qAo48SJnDrVy3.eval": {"mode": "validation"},
-    "2026-03-31T22-45-37+00-00_mle-bench_kqPNgHTCDX5qAnskktnkQD.eval": {"mode": "validation"},
-    "2026-04-03T11-21-33+00-00_mle-bench_GACVodKPMVfNBBuWzx4vC5.eval": {"mode": "validation"},
-    "2026-03-23T14-52-22+00-00_mlrc-bench_DTp3yYR7wcrKi3ggN7ioze.eval": {"mode": "validation"},
-    "2026-03-23T20-24-47+00-00_mlrc-bench_ngGriRwKEnDD6oUw2NdkGq.eval": {"mode": "validation"},
+    "2026-03-16T18-33-04+00-00_swe-bench-verified-mini_dJnAEEf9EvTnvQkjVvuvZJ.eval": {"mode": "validation"},
+    "2026-03-17T01-52-03+00-00_swe-bench_JeUnoWAJph9k8xDoDQ8ZqE.eval": {"mode": "validation"},
     # Synthetic runs — expected violation rate from construction.
-    # astabench_litqa2
-    "2026-03-24T05-31-15+00-00_litqa2_gg9Gj9vamjdPQmntFcMk2r.eval": {"mode": "uniform", "positive_rate": 1.0},   # api_not_available
-    "2026-04-13T08-10-41+00-00_litqa2_npWS62TyQJpY8rdP3Z8Lk6.eval": {"mode": "uniform", "positive_rate": 0.90},  # tool_times_out
-    "2026-04-07T07-02-19+00-00_litqa2_dnJsJbXFcDNDWWMFELf6hJ.eval": {"mode": "uniform", "positive_rate": 0.0},   # tools_removed
-    "2026-04-13T07-34-46+00-00_litqa2_5ct7pNHh36GtNvSywCWMg8.eval": {"mode": "uniform", "positive_rate": 0.46},  # tools_removed_prompt
-    # astabench_super
-    "2026-03-17T03-42-51+00-00_super_izW4zA3JsJDiWqjc3MN2kA.eval": {"mode": "uniform", "positive_rate": 0.26},   # all_tools_removed (gpt-5.4)
-    "2026-03-19T04-42-48+00-00_super_VmmPssMtVPZmUNmmZkDHfc.eval": {"mode": "uniform", "positive_rate": 1.0},    # all_tools_removed (gpt-5-mini)
+    # compute_eval
+    "2026-04-14T01-48-00+00-00_compute-eval_MgGDQdWb86Ev9stJyiezGT.eval": {"mode": "uniform", "positive_rate": 1.0},  # obvious_failure_2
 }

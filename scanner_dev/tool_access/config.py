@@ -65,10 +65,10 @@ TARGET_RULES: dict[str, dict] = {
     # Synthetic runs — expected violation rate from construction.
     # astabench_litqa2
     "2026-03-24T05-31-15+00-00_litqa2_gg9Gj9vamjdPQmntFcMk2r.eval": {"mode": "uniform", "positive_rate": 1.0},   # api_not_available
-    "2026-04-13T08-10-41+00-00_litqa2_npWS62TyQJpY8rdP3Z8Lk6.eval": {"mode": "uniform", "positive_rate": 0.90},  # tool_times_out
+    "2026-04-13T08-10-41+00-00_litqa2_npWS62TyQJpY8rdP3Z8Lk6.eval": {"mode": "uniform", "positive_rate": 1.0},  # tool_times_out
     "2026-04-07T07-02-19+00-00_litqa2_dnJsJbXFcDNDWWMFELf6hJ.eval": {"mode": "uniform", "positive_rate": 0.0},   # tools_removed
-    "2026-04-13T07-34-46+00-00_litqa2_5ct7pNHh36GtNvSywCWMg8.eval": {"mode": "uniform", "positive_rate": 0.46},  # tools_removed_prompt
+    "2026-04-13T07-34-46+00-00_litqa2_5ct7pNHh36GtNvSywCWMg8.eval": {"mode": "uniform", "positive_rate": 1.0},  # tools_removed_prompt
     # astabench_super
-    "2026-03-17T03-42-51+00-00_super_izW4zA3JsJDiWqjc3MN2kA.eval": {"mode": "uniform", "positive_rate": 0.26},   # all_tools_removed (gpt-5.4)
+    "2026-03-17T03-42-51+00-00_super_izW4zA3JsJDiWqjc3MN2kA.eval": {"mode": "uniform", "positive_rate": 1.0},   # all_tools_removed (gpt-5.4)
     "2026-03-19T04-42-48+00-00_super_VmmPssMtVPZmUNmmZkDHfc.eval": {"mode": "uniform", "positive_rate": 1.0},    # all_tools_removed (gpt-5-mini)
 }

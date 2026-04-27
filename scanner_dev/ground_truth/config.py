@@ -1,7 +1,24 @@
 from pathlib import Path
 
-_DIR = Path(__file__).parent          # scanner_dev/ground_truth/
+_DIR = Path(__file__).resolve().parent          # scanner_dev/ground_truth/
 _SCANS_DIR = Path(__file__).parents[2] / "evals/scans/ground_truth_access/dev/scan-results"
+
+# build dataset config
+REPO_ROOT = _DIR.parents[1]
+DEFAULT_BUILD_DIR = _DIR / "build"
+SPLITS = {
+    "dev": {
+        "manifest": _DIR / "data" / "dev_t5_files.csv",
+        "validation": _DIR / "dev_t5_validation.csv",
+        "provenance": "dev_t5_provenance.csv",
+    },
+    "test": {
+        "manifest": _DIR / "data" / "test_t5_files.csv",
+        "validation": _DIR / "test_t5_validation.csv",
+        "provenance": "test_t5_provenance.csv",
+    },
+}
+VALIDATION_COLUMNS = ("id", "target", "predicate")
 
 # ── Shared dataset inputs ──────────────────────────────────────────────────────
 

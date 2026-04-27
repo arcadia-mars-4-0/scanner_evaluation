@@ -1,29 +1,29 @@
 from pathlib import Path
 
-_DIR = Path(__file__).parent          # scanner_dev/tool_access/
-_SCANS_DIR = Path(__file__).parents[2] / "evals/scans/tool_failure/dev/scan-results"
+_DIR = Path(__file__).resolve().parent  # scanner_dev/tool_access/
 
 # build dataset config
+
 REPO_ROOT = _DIR.parents[1]
 DEFAULT_BUILD_DIR = _DIR / "build"
 SPLITS = {
     "dev": {
-        "manifest": _DIR / "data" / "dev_t2_files.csv",
-        "validation": _DIR / "dev_t2_validation.csv",
-        "provenance": "dev_t2_provenance.csv",
+        "manifest": _DIR / "data" / "dev_oh1_files.csv",
+        "validation": _DIR / "dev_oh1_validation.csv",
+        "provenance": "dev_oh1_provenance.csv",
     },
     "test": {
-        "manifest": _DIR / "data" / "test_t2_files.csv",
-        "validation": _DIR / "test_t2_validation.csv",
-        "provenance": "test_t2_provenance.csv", # Note: these files don't exist yet since we haven't built the test dataset, but we'll want to follow the same naming convention when we do.
+        "manifest": _DIR / "data" / "test_oh1_files.csv",
+        "validation": _DIR / "test_oh1_validation.csv",
+        "provenance": "test_oh1_provenance.csv",
     },
 }
 VALIDATION_COLUMNS = ("id", "target", "predicate")
 
 # ── Shared dataset inputs ──────────────────────────────────────────────────────
 
-PROVENANCE_CSV = _DIR / "build/dev_t2_provenance.csv"
-VALIDATION_CSV = _DIR / "dev_t2_validation.csv"
+PROVENANCE_CSV = _DIR / "build/dev_oh1_provenance.csv"
+VALIDATION_CSV = _DIR / "dev_oh1_validation.csv"
 
 VIOLATION_THRESHOLD = 1
 
@@ -32,21 +32,21 @@ EXCLUDE_EVAL_FILES: list[str] | None = None
 
 # ── Single-scanner evaluation (scanner_dev_evaluation.ipynb) ──────────────────
 
-SCAN_RESULTS_PATH = _SCANS_DIR / "scan_id=JfL9Q2bcaXtpiZZvcQRV7a"
-SCANNER_KEY = "tool_access"
+SCAN_RESULTS_PATH = _DIR / "scan-results/scan_id=Pxp886i6HvFPsfojPcXBWe"
+SCANNER_KEY = "answer_formatting"
 
 # ── Two-scanner comparison (scanner_dev_comparison.ipynb) ─────────────────────
 
 SCANNERS: list[dict] = [
     {
         "label": "GPT 5.4",
-        "scan_results_path": _SCANS_DIR / "scan_id=JfL9Q2bcaXtpiZZvcQRV7a",
-        "scanner_key": "tool_access",
+        "scan_results_path": _DIR / "scan-results/scan_id=JfL9Q2bcaXtpiZZvcQRV7a",
+        "scanner_key": "answer_formatting",
     },
     {
         "label": "Claude Sonnet 4.6",
-        "scan_results_path": _SCANS_DIR / "scan_id=cpvwU5davvTxGbje6jdqYt",
-        "scanner_key": "tool_access",
+        "scan_results_path": _DIR / "scan-results/scan_id=cpvwU5davvTxGbje6jdqYt",
+        "scanner_key": "answer_formatting",
     },
 ]
 

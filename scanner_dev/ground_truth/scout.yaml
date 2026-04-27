@@ -3,7 +3,7 @@
 ##   uv run python scanner_dev/ground_truth/build_dataset.py
 
 transcripts: ./build/eval-logs
-scans: ./scan-results
+scans: ./scan-results/test
 
 scanners:
   - name: ground_truth_access
@@ -14,8 +14,8 @@ scanners:
   #   file: ../../scanners.py
 
 validation:
-  ground_truth_access: ./dev_t5_validation.csv
+  #ground_truth_access: ./dev_t5_validation.csv
 
-model: openai/gpt-5.4 #openai/gpt-5.4 anthropic/claude-sonnet-4-6
+model: anthropic/claude-sonnet-4-6 #openai/gpt-5.4 anthropic/claude-sonnet-4-6
 generate_config:
   max_connections: 50

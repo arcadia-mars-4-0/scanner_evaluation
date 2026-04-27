@@ -11,9 +11,19 @@ from pathlib import Path
 
 GROUND_TRUTH_DIR = Path(__file__).resolve().parent
 REPO_ROOT = GROUND_TRUTH_DIR.parents[1]
-DEFAULT_MANIFEST = GROUND_TRUTH_DIR / "data" / "dev_t5_files.csv"
 DEFAULT_BUILD_DIR = GROUND_TRUTH_DIR / "build"
-DEFAULT_VALIDATION_PATH = GROUND_TRUTH_DIR / "dev_t5_validation.csv"
+SPLITS = {
+    "dev": {
+        "manifest": GROUND_TRUTH_DIR / "data" / "dev_t5_files.csv",
+        "validation": GROUND_TRUTH_DIR / "dev_t5_validation.csv",
+        "provenance": "dev_t5_provenance.csv",
+    },
+    "test": {
+        "manifest": GROUND_TRUTH_DIR / "data" / "test_t5_files.csv",
+        "validation": GROUND_TRUTH_DIR / "test_t5_validation.csv",
+        "provenance": "test_t5_provenance.csv",
+    },
+}
 VALIDATION_COLUMNS = ("id", "target", "predicate")
 
 
@@ -25,10 +35,16 @@ def parse_args() -> argparse.Namespace:
         )
     )
     parser.add_argument(
+        "--split",
+        choices=sorted(SPLITS),
+        default="dev",
+        help="Which manifest split to stage (controls default file names).",
+    )
+    parser.add_argument(
         "--manifest",
         type=Path,
-        default=DEFAULT_MANIFEST,
-        help="CSV manifest describing the development corpus.",
+        default=None,
+        help="CSV manifest describing the corpus (defaults to the split's manifest).",
     )
     parser.add_argument(
         "--build-dir",
@@ -54,6 +70,13 @@ def parse_args() -> argparse.Namespace:
         action="append",
         default=[],
         help="Limit staging to one or more method values from the manifest.",
+    )
+    parser.add_argument(
+        "--model",
+        dest="models",
+        action="append",
+        default=[],
+        help="Limit staging to one or more model values from the manifest.",
     )
     return parser.parse_args()
 
@@ -262,6 +285,10 @@ def select_rows(rows: list[ManifestRow], args: argparse.Namespace) -> list[Manif
         allowed = {name.strip() for name in args.methods if name.strip()}
         selected = [row for row in selected if row.method in allowed]
 
+    if args.models:
+        allowed = {name.strip() for name in args.models if name.strip()}
+        selected = [row for row in selected if row.model in allowed]
+
     return selected
 
 
@@ -387,7 +414,8 @@ def write_provenance_csv(rows: list[ManifestRow], output_path: Path) -> int:
 
 def main() -> None:
     args = parse_args()
-    manifest_path = args.manifest.resolve()
+    split = SPLITS[args.split]
+    manifest_path = (args.manifest or split["manifest"]).resolve()
     build_dir = args.build_dir.resolve()
 
     rows = load_manifest(manifest_path)
@@ -397,8 +425,8 @@ def main() -> None:
         raise ValueError("No manifest rows matched the requested staging filters.")
 
     eval_logs_dir = build_dir / "eval-logs"
-    validation_path = DEFAULT_VALIDATION_PATH
-    provenance_path = build_dir / "dev_t5_provenance.csv"
+    validation_path = split["validation"]
+    provenance_path = build_dir / split["provenance"]
 
     staged_count = stage_eval_logs(rows, eval_logs_dir)
     validation_count = write_validation_csv(rows, validation_path)

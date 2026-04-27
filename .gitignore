@@ -20,7 +20,7 @@ build/
 
 # Data
 logs
-scans
+evals 
 #hf_data
 *.csv
 *.json*
@@ -41,7 +41,6 @@ eval_grading/**/**/validation-archive
 #exception for validation csvs
 !evals/**/*.csv
 !eval_grading/**/*.csv
+!scanner_dev/ground_truth/*.csv
 #!scanner_dev/ground_truth/build/
 #!scanner_dev/ground_truth/build/**/*.csv
-#!scanner_dev/**/*.csv
-

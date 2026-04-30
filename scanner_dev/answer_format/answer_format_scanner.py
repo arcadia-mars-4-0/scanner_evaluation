@@ -35,6 +35,33 @@ Your answer should include an explanation of your assessment. It should include 
 
 {{ answer_format }}"""
 
+answer_format_prompt_2 = """\
+Your job: Determine whether the benchmark explicitly specifies the expected answer format (e.g., a number, a specific string, a date format, units, precision, case sensitivity, submission format and requirements), and whether failures occur due to format mismatches rather than incorrect reasoning.
+
+Scope: Judge the answer format requirements, not how the agent gets to the final answer. A prompt that omits where to make a fix or which approach to take is not necessarily underspecified.
+
+Judge the system and user prompt, not the pipeline:
+- Scorer behavior is not always relevant. A lenient scorer doesn't make a prompt clear; a strict scorer doesn't make it unclear. Conversely, the task may pass despite an underspecified prompt because the agent reasoned well. Therefore, focus on whether the prompt format instructions are clear, and whether any format issues caused failure if the prompt is not clear.
+- The gold answer should not be used retroactively to decide if the answer formatting is clear. If you only know the expected format because the gold answer reveals it, the prompt is potentially underspecified.
+- Even if a submit tool is present, the submitted answer may be a written file, environment state, or something else rather than the submit() argument. Decide which artifact the scorer evaluates and judge the format of that artifact. Ambiguity about how to submit is NOT a format issue.
+
+Common format issues:
+- Rounding or precision (numerical answers)
+- Units or scales (percent vs decimal, seconds vs ms)
+- Data structure (list vs single value, ordering, nesting)
+- String format (dates, capitalization, whitespace, delimiters)
+Task-specific issues you identify are equally valid.
+
+Report your answer as a number between 0 and 3:
+
+Score = 0, No Evidence: Answer format specified precisely. No material decisions left for the agent. Remaining ambiguity about format is trivial (e.g., whitespace a scorer would normalize).
+Score = 1, Potential: Format is partially ambiguous, but the agent can understand the required format through careful reading plus using widely-held domain convention.
+Score = 2, Clear: Format is not clearly specified, with at least two or more reasonable interpretations producing meaningfully different submissions. Several individually-resolvable ambiguities also score 2; minor ambiguities compound rather than average.
+Score = 3, Impactful: Format issues directly caused failure despite correct reasoning, OR ambiguity is severe enough that most reasonable interpretations would fail.
+
+Output the numeric value only.
+"""
+
 answer_format_prompt = """\
 Your job: Assess whether the system and user prompts unambiguously communicate to the agent what form the final answer should take, and identify potential failures due to format mismatches rather than incorrect reasoning.
 Use all other provided context to inform your analysis of the prompts.

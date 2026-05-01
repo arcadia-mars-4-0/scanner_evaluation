@@ -1,7 +1,7 @@
 from pathlib import Path
 
 _DIR = Path(__file__).resolve().parent          # scanner_dev/ground_truth/
-_SCANS_DIR = Path(__file__).parents[2] / "evals/scans/ground_truth_access/dev/scan-results"
+_SCANS_DIR = Path(__file__).parents[2] / "evals/scans/ground_truth_access/test/scan-results"
 
 # build dataset config
 REPO_ROOT = _DIR.parents[1]
@@ -25,27 +25,27 @@ VALIDATION_COLUMNS = ("id", "target", "predicate")
 PROVENANCE_CSV = _DIR / "build/dev_t5_provenance.csv"
 VALIDATION_CSV = _DIR / "dev_t5_validation.csv"
 
-VIOLATION_THRESHOLD = 1
+VIOLATION_THRESHOLD = 2
 
 INCLUDE_EVAL_FILES: list[str] | None = None
 EXCLUDE_EVAL_FILES: list[str] | None = None
 
 # ── Single-scanner evaluation (scanner_dev_evaluation.ipynb) ──────────────────
 
-SCAN_RESULTS_PATH = _SCANS_DIR / "scan_id=3bTfaerfMoM8URaYbfVEwX"
+SCAN_RESULTS_PATH = _SCANS_DIR / "scan_id=MH6UxNTcbmXqXVqJnmmb7G"
 SCANNER_KEY = "ground_truth_access"
 
 # ── Two-scanner comparison (scanner_dev_comparison.ipynb) ─────────────────────
 
 SCANNERS: list[dict] = [
     {
-        "label": "GPT 5.4",
-        "scan_results_path": _SCANS_DIR / "scan_id=3bTfaerfMoM8URaYbfVEwX",
+        "label": "GPT 5.4 r2",
+        "scan_results_path": _SCANS_DIR / "scan_id=3hdEFtG2KsMd8BbxWPGLYp",
         "scanner_key": "ground_truth_access",
     },
     {
-        "label": "Claude 4.6",
-        "scan_results_path": _SCANS_DIR / "scan_id=CG8Rg5PHtZAtpizwM592WB",
+        "label": "GPT 5.4 r1",
+        "scan_results_path": _SCANS_DIR / "scan_id=3bTfaerfMoM8URaYbfVEwX",
         "scanner_key": "ground_truth_access",
     },
 ]

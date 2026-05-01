@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 # specify which config to use for this build script
-from answer_format.config import DEFAULT_BUILD_DIR, REPO_ROOT, SPLITS, VALIDATION_COLUMNS
+from ground_truth.config import DEFAULT_BUILD_DIR, REPO_ROOT, SPLITS, VALIDATION_COLUMNS
 
 
 def parse_args() -> argparse.Namespace:

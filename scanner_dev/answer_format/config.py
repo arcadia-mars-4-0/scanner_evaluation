@@ -32,7 +32,7 @@ EXCLUDE_EVAL_FILES: list[str] | None = None
 
 # ── Single-scanner evaluation (scanner_dev_evaluation.ipynb) ──────────────────
 
-SCAN_RESULTS_PATH = _DIR / "scan-results/scan_id=EXSVJepSBM5WT4DJJkPWXj"
+SCAN_RESULTS_PATH = _DIR / "scan-results/scan_id=mf4inWj2kowqq5ZU77YzVQ"
 SCANNER_KEY = "answer_format"
 
 # ── Two-scanner comparison (scanner_dev_comparison.ipynb) ─────────────────────
@@ -45,7 +45,7 @@ SCANNERS: list[dict] = [
     },
     {
         "label": "Claude Sonnet 4.6",
-        "scan_results_path": _DIR / "scan-results/scan_id=LFcL8n3DfDkrwYyDbU2Ejp",
+        "scan_results_path": _DIR / "scan-results/scan_id=gYffMFJBSnbC5EWRYbdMtr",
         "scanner_key": "answer_format",
     },
 ]

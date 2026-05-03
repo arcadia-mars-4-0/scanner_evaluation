@@ -2,7 +2,7 @@
 ## Rebuild ./build first:
 ##   uv run python scanner_dev/build_dataset.py
 
-transcripts: ./build/synthetic
+transcripts: ./build/eval-logs
 scans: ./scan-results
 
 scanners:

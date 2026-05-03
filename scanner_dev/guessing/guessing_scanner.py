@@ -37,13 +37,13 @@ Your answer should include an explanation of your assessment. It should include 
 
 
 answer_format_prompt = """\
-Your job: Assess the overall evaluation design's resistance to random guessing, considering the answer space size, the complexity of the task, and implementation details that lead to a correct solution.
+Your job: Assess whether ground truth answers are complex enough that an agent cannot achieve meaningful scores through random or systematic guessing (e.g., free-text answers vs. binary yes/no, large answer spaces vs. small multiple-choice sets).
 
 Report your answer as a number between 0 (no issues) and 3 (clear issue). Guidance for these scores is:
-Score = 0, No evidence: The task or solution structure renders guessing impossible or highly impractical. This includes scenarios where individual task components may be guessed but the final solution cannot be reached through sequential guessing.
-Score = 1, Potential: The task is complex and may be vulnerable to sequential guessing or a similar strategy, but contains some safeguards (e.g., multiple independent steps).
-Score = 2, Clear: The task could realistically be passed with a successful guess, and guessing is practical because the solution space is small.
-Score = 3, Impactful: Agent successfully passes a task via guessing, rather than accomplishing the intended objective.
+Score = 0, No Evidence: The structure of the task (e.g., generating functioning code) or answer space (e.g., floating point numeric) render guessing extremely unlikely or impossible.
+Score = 1, Minimal: Guessing is possible in principle, but expected pass rates from uninformed or semi-informed guessing remain low (e.g., < 10%). An example may be guessing common values for a well known concept (e.g., commonly reported p-values).
+Score = 2, Moderate: The possible answer space is small enough that uninformed guessing yields a meaningful pass rate (e.g., >= 10%), or semi-informed guessing from surface features raises expected pass rates into this range.
+Score = 3, Demonstrated: The task is vulnerable to guessing (meeting criteria for Score 2 or higher) and there is also clear evidence the model is reasoning its way through guessing or inference from surface features instead of the intended solution path, and this is sufficient to guess the answer. Both must occur.
 
 Do not include the label in your scores, just the numeric value.
 """
@@ -82,7 +82,7 @@ def guessing() -> Scanner[Transcript]:
 
         return (
             f"{answer_format_prompt}"
-            f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
+            # f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
             f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
             f"--- TOOL INTERACTIONS (all calls and outputs) ---\n{tool_context}\n\n"
             f"--- ASSISTANT MESSAGES (last 4 before task end) ---\n{preceding_text}\n\n"

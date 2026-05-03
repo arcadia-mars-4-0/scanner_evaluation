@@ -1,0 +1,18 @@
+## Scanner development staging config.
+## Rebuild ./build first:
+##   uv run python scanner_dev/build_dataset.py
+
+transcripts: ./build/synthetic
+scans: ./scan-results
+
+scanners:
+  - name: guessing
+    file: ./guessing_scanner.py
+
+validation:
+  guessing: ./dev_ob3_validation.csv
+
+# model: anthropic/claude-sonnet-4-6
+model: openai/gpt-5.4
+generate_config:  
+  max_connections: 50

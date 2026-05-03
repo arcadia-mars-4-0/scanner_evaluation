@@ -1,0 +1,98 @@
+
+# ---- answer_format -----
+# check for correct specification of answer format that may lead to false negatives
+# This is for criteria O.h.1
+# To do this, the scanner will need access to:
+# 1. The prompt (both system and user)
+# 2. The final answer output
+# 3. The gold standard/expected answer
+
+# Custom template: omits the default "You are an expert in LLM transcript
+# analysis..." preamble and {{ messages }} block so only our constructed
+# context is sent to the model.
+
+from inspect_scout import (
+    Scanner, 
+    Transcript, 
+    llm_scanner,
+    scanner, 
+)
+
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parents[2]))
+
+from scanners import get_gold_answers, get_gold_solution
+from scanner_dev.tool_access.tool_access_scanner import get_task_result, get_tool_interactions
+
+
+
+ANSWER_FORMAT_TEMPLATE = """\
+You are an expert in LLM transcript analysis. Here is an LLM transcript you will be analyzing to answer a question:
+{{ question }}
+
+Your answer should include an explanation of your assessment. It should include the message ids (e.g. '[M2]') to clarify which message(s) you are referring to.
+
+{{ answer_format }}"""
+
+
+answer_format_prompt = """\
+Your job: Assess the overall evaluation design's resistance to random guessing, considering the answer space size, the complexity of the task, and implementation details that lead to a correct solution.
+
+Report your answer as a number between 0 (no issues) and 3 (clear issue). Guidance for these scores is:
+Score = 0, No evidence: The task or solution structure renders guessing impossible or highly impractical. This includes scenarios where individual task components may be guessed but the final solution cannot be reached through sequential guessing.
+Score = 1, Potential: The task is complex and may be vulnerable to sequential guessing or a similar strategy, but contains some safeguards (e.g., multiple independent steps).
+Score = 2, Clear: The task could realistically be passed with a successful guess, and guessing is practical because the solution space is small.
+Score = 3, Impactful: Agent successfully passes a task via guessing, rather than accomplishing the intended objective.
+
+Do not include the label in your scores, just the numeric value.
+"""
+@scanner(messages="all")
+def guessing() -> Scanner[Transcript]:
+
+    async def build_question(transcript: Transcript) -> str:
+
+        system_text = "\n".join(
+            f"[M{i}] {m.text}" for i, m in enumerate(transcript.messages) if m.role == "system"
+        )
+        user_text = "\n".join(
+            m.text for m in transcript.messages if m.role == "user"
+        )
+
+        tool_context = get_tool_interactions(transcript)
+        gold_answers = get_gold_answers(transcript)
+        gold_solution_code = get_gold_solution(transcript)
+        task_result = get_task_result(transcript)
+
+        def assistant_text(m) -> str:
+            if isinstance(m.content, str):
+                return m.content
+            parts = []
+            for c in m.content:
+                if c.type == "reasoning":
+                    thinking = c.reasoning if not c.redacted else (c.summary or "")
+                    parts.append(f"reasoning trace:\n{thinking}\n [end of reasoning]")
+                elif c.type == "text":
+                    parts.append(c.text)
+            return "\n".join(parts)
+
+
+        preceding_assistant = [m for m in transcript.messages if m.role == "assistant"][-4:]
+        preceding_text = "\n\n".join(assistant_text(m) for m in preceding_assistant) or "(none)"
+
+        return (
+            f"{answer_format_prompt}"
+            f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
+            f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
+            f"--- TOOL INTERACTIONS (all calls and outputs) ---\n{tool_context}\n\n"
+            f"--- ASSISTANT MESSAGES (last 4 before task end) ---\n{preceding_text}\n\n"
+            f"--- GOLD SOLUTION CODE ---\n{gold_solution_code}\n\n"
+            f"--- GOLD STANDARD ANSWERS ---\n{gold_answers}\n"
+            f"--- TASK RESULT ---\n{task_result}\n"
+        )
+
+    return llm_scanner(
+        question=build_question,
+        answer="numeric",
+        template=ANSWER_FORMAT_TEMPLATE,
+    )

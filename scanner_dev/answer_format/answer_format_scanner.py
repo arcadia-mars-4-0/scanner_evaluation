@@ -2,10 +2,10 @@
 # ---- answer_format -----
 # check for correct specification of answer format that may lead to false negatives
 # This is for criteria O.h.1
-# To do this, the scanner will need access to:
+# To do this, the scanner should have access to:
 # 1. The prompt (both system and user)
 # 2. The final answer output
-# 3. The gold standard/expected answer
+# 3. The gold standard/expected answer and gold solution, if available
 
 from inspect_scout import (
     Scanner, 
@@ -83,18 +83,6 @@ def answer_format() -> Scanner[Transcript]:
         gold_answers = get_gold_answers(transcript)
         gold_solution_code = get_gold_solution(transcript)
         task_result = get_task_result(transcript)
-
-        def assistant_text(m) -> str:
-            if isinstance(m.content, str):
-                return m.content
-            parts = []
-            for c in m.content:
-                if c.type == "reasoning":
-                    thinking = c.reasoning if not c.redacted else (c.summary or "")
-                    parts.append(f"reasoning trace:\n{thinking}\n [end of reasoning]")
-                elif c.type == "text":
-                    parts.append(c.text)
-            return "\n".join(parts)
 
         return (
             f"{answer_format_prompt}"

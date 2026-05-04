@@ -60,21 +60,9 @@ def guessing() -> Scanner[Transcript]:
         gold_solution_code = get_gold_solution(transcript)
         task_result = get_task_result(transcript)
 
-        def assistant_text(m) -> str:
-            if isinstance(m.content, str):
-                return m.content
-            parts = []
-            for c in m.content:
-                if c.type == "reasoning":
-                    thinking = c.reasoning if not c.redacted else (c.summary or "")
-                    parts.append(f"reasoning trace:\n{thinking}\n [end of reasoning]")
-                elif c.type == "text":
-                    parts.append(c.text)
-            return "\n".join(parts)
-
         return (
             f"{answer_format_prompt}"
-            # f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
+            f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
             f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
             f"--- TOOL INTERACTIONS (all calls and outputs) ---\n{tool_context}\n\n"
             f"--- GOLD SOLUTION CODE ---\n{gold_solution_code}\n\n"

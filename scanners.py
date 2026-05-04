@@ -285,6 +285,13 @@ def get_gold_answers(transcript: Transcript) -> str:
     """
     sample_metadata = (transcript.metadata or {}).get("sample_metadata", {})
 
+    if isinstance(sample_metadata, str):
+        import json
+        try:
+            sample_metadata = json.loads(sample_metadata)
+        except (json.JSONDecodeError, ValueError):
+            return sample_metadata
+
     # CORE-bench style
     results = sample_metadata.get("results")
     if results is not None:
@@ -320,6 +327,13 @@ def get_gold_solution(transcript: Transcript) -> str:
     - SWE-bench: "patch" — unified diff applied to base_commit to fix the issue
     """
     sample_metadata = (transcript.metadata or {}).get("sample_metadata", {})
+
+    if isinstance(sample_metadata, str):
+        import json
+        try:
+            sample_metadata = json.loads(sample_metadata)
+        except (json.JSONDecodeError, ValueError):
+            return sample_metadata
 
     GOLD_SOLUTION_FIELDS = [
         # SWE-bench: gold solution is a unified diff stored under "patch"

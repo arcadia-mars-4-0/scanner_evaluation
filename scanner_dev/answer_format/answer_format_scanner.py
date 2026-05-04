@@ -100,16 +100,11 @@ def answer_format() -> Scanner[Transcript]:
                     parts.append(c.text)
             return "\n".join(parts)
 
-
-        preceding_assistant = [m for m in transcript.messages if m.role == "assistant"][-4:]
-        preceding_text = "\n\n".join(assistant_text(m) for m in preceding_assistant) or "(none)"
-
         return (
             f"{answer_format_prompt}"
             f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
             f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
             f"--- TOOL INTERACTIONS (all calls and outputs) ---\n{tool_context}\n\n"
-            f"--- ASSISTANT MESSAGES (last 4 before task end) ---\n{preceding_text}\n\n"
             f"--- GOLD SOLUTION CODE ---\n{gold_solution_code}\n\n"
             f"--- GOLD STANDARD ANSWERS ---\n{gold_answers}\n"
             f"--- TASK RESULT ---\n{task_result}\n"

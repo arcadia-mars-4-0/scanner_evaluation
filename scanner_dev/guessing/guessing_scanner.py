@@ -1,15 +1,11 @@
 
-# ---- answer_format -----
-# check for correct specification of answer format that may lead to false negatives
-# This is for criteria O.h.1
-# To do this, the scanner will need access to:
+# ---- guessing -----
+# Scanner to assess whether the task is vulnerable to guessing and if so has guessing present.
+# This is for criteria O.b.3
+# To do this, the scanner should have access to:
 # 1. The prompt (both system and user)
-# 2. The final answer output
-# 3. The gold standard/expected answer
-
-# Custom template: omits the default "You are an expert in LLM transcript
-# analysis..." preamble and {{ messages }} block so only our constructed
-# context is sent to the model.
+# 2. Tool interactions (to see if the model is using tools to arrive at the answer or is guessing/inferencing from surface features)
+# 3. The gold standard/expected answer and gold solution, if available
 
 from inspect_scout import (
     Scanner, 

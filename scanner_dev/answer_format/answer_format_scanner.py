@@ -7,10 +7,6 @@
 # 2. The final answer output
 # 3. The gold standard/expected answer
 
-# Custom template: omits the default "You are an expert in LLM transcript
-# analysis..." preamble and {{ messages }} block so only our constructed
-# context is sent to the model.
-
 from inspect_scout import (
     Scanner, 
     Transcript, 

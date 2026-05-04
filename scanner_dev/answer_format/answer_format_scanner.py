@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).parents[2]))
 
 from scanners import get_gold_answers, get_gold_solution
 from scanner_dev.tool_access.tool_access_scanner import get_task_result, get_tool_interactions
+from scanner_dev.scanner_utils import get_system_messages, get_user_messages
 
 
 
@@ -72,12 +73,8 @@ def answer_format() -> Scanner[Transcript]:
 
     async def build_question(transcript: Transcript) -> str:
 
-        system_text = "\n".join(
-            f"[M{i}] {m.text}" for i, m in enumerate(transcript.messages) if m.role == "system"
-        )
-        user_text = "\n".join(
-            m.text for m in transcript.messages if m.role == "user"
-        )
+        system_text = get_system_messages(transcript)
+        user_text = get_user_messages(transcript)
 
         tool_context = get_tool_interactions(transcript)
         gold_answers = get_gold_answers(transcript)

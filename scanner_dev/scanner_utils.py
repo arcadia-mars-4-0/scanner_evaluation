@@ -279,6 +279,24 @@ def get_gold_answers(transcript: Transcript) -> str:
     return "(not available)"
 
 
+def get_final_submission(transcript: Transcript) -> str:
+    """Return the text of the last assistant message (text content only, no reasoning).
+
+    Used as a fallback when there are no tool interactions to provide context on
+    what the model actually submitted.
+    """
+    final_msg = next(
+        (m for m in reversed(transcript.messages) if m.role == "assistant"),
+        None,
+    )
+    if final_msg is None:
+        return ""
+    if isinstance(final_msg.content, str):
+        return final_msg.content
+    parts = [c.text for c in final_msg.content if getattr(c, "type", None) == "text" and c.text]
+    return "\n".join(parts)
+
+
 def get_gold_solution(transcript: Transcript) -> str:
     """Extract the gold standard solution code or patch from transcript metadata.
 

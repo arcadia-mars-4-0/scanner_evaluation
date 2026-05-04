@@ -19,8 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[2]))
 
 from scanners import get_gold_answers, get_gold_solution
-from scanner_dev.tool_access.tool_access_scanner import get_task_result, get_tool_interactions
-from scanner_dev.scanner_utils import get_system_messages, get_user_messages
+from scanner_dev.scanner_utils import get_system_messages, get_user_messages, get_final_submission, get_task_result, get_tool_interactions
 
 
 
@@ -57,7 +56,7 @@ def guessing() -> Scanner[Transcript]:
         gold_solution_code = get_gold_solution(transcript)
         task_result = get_task_result(transcript)
 
-        return (
+        question = (
             f"{answer_format_prompt}"
             f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
             f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
@@ -66,6 +65,13 @@ def guessing() -> Scanner[Transcript]:
             f"--- GOLD STANDARD ANSWERS ---\n{gold_answers}\n"
             f"--- TASK RESULT ---\n{task_result}\n"
         )
+
+        if tool_context == "(no tool interactions found)":
+            final_text = get_final_submission(transcript)
+            if final_text:
+                question += f"\n--- FINAL MESSAGE ---\n{final_text}\n"
+
+        return question
 
     return llm_scanner(
         question=build_question,

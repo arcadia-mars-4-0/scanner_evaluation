@@ -31,12 +31,18 @@ evals
 eval_grading/**/scan-results
 scanner_dev/ground_truth/scan-results
 scanner_dev/ground_truth/build/**
+
+#compiled results for analysis
+analysis/**/results
+
 #archived code
 scanner_pilot/
 eval_grading/**/**/validation-archive
 
 #exception for intermediate files
 !analysis/preprocessed*.csv
+
+
 
 #exception for validation csvs
 !evals/**/*.csv

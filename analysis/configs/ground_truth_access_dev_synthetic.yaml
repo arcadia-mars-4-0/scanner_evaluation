@@ -1,0 +1,34 @@
+# Run-specific config for analysis/scanner_synthetic.ipynb.
+# Synthetic-data evaluation: every transcript is assumed to be a violation
+# (target = 100% positive rate). There is no validation file.
+
+target_scanner: ground_truth_access      # directory name under evals/scans/
+split: dev                                # "dev" or "test"
+scanner_key: null                         # null = auto-detect from parquets
+violation_threshold: 2                    # score >= threshold counts as a positive
+
+# Subdirectory under analysis/results/{target_scanner}/{split}/ for figures/tables.
+# Set to null to skip saving outputs.
+results_subdir: synthetic_dev
+
+# Optional scan_id filters (empty list = no filter).
+include_scan_ids:
+  - kpsLgckzxoTckrwERUrqrd
+exclude_scan_ids: []
+
+# Synthetic data is grouped by eval_file rather than by benchmark name, since
+# multiple eval files can share a benchmark but use different synthetic-data
+# approaches. Map each eval_file basename to a short display label; eval_files
+# not listed here will still appear, labeled by their (benchmark, eval_file)
+# fallback.
+eval_file_groups:
+  2026-03-27T14-34-51+00-00_swe-bench-verified-mini_n3CMjefQBLv9aioCrWJruf.eval: SWE-Bench - Contamination
+  2026-04-05T18-27-27+00-00_swe-bench_38WCvSh5XQpJH98tnAKxit.eval: SWE-Bench - Contamination
+  2026-04-06T02-03-57+00-00_core-bench_Lcen3QviFFvtpzLR2M7igN.eval: CORE-Bench - Contamination
+  2026-04-06T08-43-14+00-00_terminal-bench-2-0-oracle_7LhUD5D6mWs5Ygr2L7rC4k.eval: Terminal Bench - Cont. Announce
+  2026-04-07T01-59-51+00-00_terminal-bench-2-0-oracle_3Dn4fjyyh3FRdsmHzAqu9Q.eval: Terminal Bench - Cont. Subtle
+  2026-04-06T23-30-27+00-00_terminal-bench-2-0-oracle_ETAznfha6MQiFnGWFAGDdY.eval: Terminal Bench - Cont. Default
+  2026-03-27T14-55-06+00-00_swe-bench-verified-mini_dLD6CXifonCqHfUTa5HVSw.eval: SWE-Bench - Web Search
+  2026-04-05T18-09-59+00-00_swe-bench_5GB8pn7xBw9aQXNXZqakmR.eval: SWE-Bench - Web Search
+  2026-04-06T02-20-13+00-00_core-bench_7Nd6ZmaA5wszv8cSbeVrzY.eval: CORE-Bench - Web Search
+

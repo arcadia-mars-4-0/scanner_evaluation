@@ -1,0 +1,25 @@
+# Run-specific config for analysis/scanner_analysis.ipynb.
+# Display invariants (model/benchmark aliases, colors) live in the notebook.
+
+target_scanner: ground_truth_access      # directory name under evals/scans/
+split: dev                                # "dev" or "test"
+scanner_key: null                         # null = auto-detect from parquets
+violation_threshold: 2                    # score >= threshold counts as a positive
+
+# Validation CSV(s) to load from {VALIDATION_DIR}. Accepts:
+#   null   — load all CSVs in the directory and aggregate (dedup transcript_id)
+#   string — use just that one file (filename or stem)
+#   list   — use the listed subset of files
+# When multiple files are loaded, rows are stacked and deduplicated by
+# transcript_id (first non-null grade wins; conflicts are reported).
+validation_file: dev_t5_validation.csv
+
+# Subdirectory under analysis/results/{target_scanner}/{split}/ for figures/tables.
+# Set to null to skip saving outputs.
+results_subdir: gpt_vs_gpt_comp
+
+# Optional scan_id filters (empty list = no filter).
+include_scan_ids:
+  - 3bTfaerfMoM8URaYbfVEwX
+  - 3hdEFtG2KsMd8BbxWPGLYp
+exclude_scan_ids: []

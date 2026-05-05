@@ -1,0 +1,47 @@
+# Run-specific config for analysis/scanner_combined_results.ipynb.
+# Aggregates results from multiple target scanners into a single dataframe.
+# Display invariants (model/benchmark aliases, colors) live in the notebook.
+
+violation_threshold: 2
+
+# Subdirectory under analysis/results/combined/ for figures/tables.
+# Set to null to skip saving outputs.
+results_subdir: combined_dev_test
+
+# One entry per target scanner to include. Add more entries to extend.
+#   target_scanner    — directory name under evals/scans/
+#   split             — "dev" or "test"
+#   scanner_key       — null = auto-detect from parquets
+#   scan_ids          — explicit list of scan_id values to include.
+#                       Empty list = include every scan_id under the directory.
+#   validation_files  — list of validation CSV stems/filenames to load.
+#                       null = all CSVs in the validation directory.
+scanners:
+  - target_scanner: ground_truth_access
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - 3bTfaerfMoM8URaYbfVEwX
+      - CG8Rg5PHtZAtpizwM592WB
+    validation_files: 
+      - 'dev_t5_validation.csv'
+  - target_scanner: ground_truth_access
+    split: test
+    scanner_key: null
+    scan_ids: []
+    validation_files: 
+      - 'post_validation_sample_MH6UxNTcbmXqXVqJnmmb7G.csv'
+  - target_scanner: tool_failure
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - cpvwU5davvTxGbje6jdqYt
+      - JfL9Q2bcaXtpiZZvcQRV7a
+    validation_files: null
+  - target_scanner: answer_format
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - hrjV5PM9VTjo6cvCza9Qor
+      - Mcx24KtsbgMP9r7UPqGBZj
+    validation_files: null

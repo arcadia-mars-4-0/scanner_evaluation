@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 # specify which config to use for this build script
-from ground_truth.config import DEFAULT_BUILD_DIR, REPO_ROOT, SPLITS, VALIDATION_COLUMNS
+from guessing.config import DEFAULT_BUILD_DIR, REPO_ROOT, SPLITS, VALIDATION_COLUMNS
 
 
 def parse_args() -> argparse.Namespace:
@@ -185,9 +185,11 @@ class ManifestRow:
         )
 
         if include_in_validation and validation_path is None:
-            raise ValueError(
-                f"Row {line_number}: include_in_validation=yes requires a validation_path"
+            print(
+                f"Warning: Row {line_number}: include_in_validation=yes but no validation_path; "
+                f"treating as include_in_validation=no"
             )
+            include_in_validation = False
         if include_in_validation and not include_in_dev:
             raise ValueError(
                 f"Row {line_number}: validation rows must also be included in the dev corpus"

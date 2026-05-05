@@ -9,7 +9,8 @@ from pathlib import Path
 import pandas as pd
 
 VALIDATION_COLUMNS = ("id", "target", "predicate")
-STRATA_COLUMNS = ("transcript_task_set", "transcript_model")
+TASK_SET_COLUMN = "transcript_task_set"
+MODEL_COLUMN = "transcript_model"
 
 
 def parse_args() -> argparse.Namespace:
@@ -28,8 +29,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--sample-size",
         type=int,
-        default=50,
-        help="Number of transcripts to sample from each stratum, above and below the threshold (default: 50).",
+        default=25,
+        help="Number of transcripts to sample from each stratum, above and below the threshold (default: 25).",
     )
     parser.add_argument(
         "--target",
@@ -69,6 +70,14 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=0,
         help="Random seed for sampling low-score transcripts (default: 0).",
+    )
+    parser.add_argument(
+        "--stratify-by-model",
+        action="store_true",
+        help=(
+            "Also stratify sampling by transcript_model. "
+            "Default: pool transcripts across models so only task_set is the stratum."
+        ),
     )
     return parser.parse_args()
 
@@ -121,9 +130,13 @@ def build_rows(
     target: int,
     predicate: str,
     seed: int,
+    stratify_by_model: bool = False,
 ) -> tuple[list[dict[str, object]], pd.DataFrame]:
     df = pd.read_parquet(parquet_path)
-    available_strata = [c for c in STRATA_COLUMNS if c in df.columns]
+    candidate_strata = [TASK_SET_COLUMN]
+    if stratify_by_model:
+        candidate_strata.append(MODEL_COLUMN)
+    available_strata = [c for c in candidate_strata if c in df.columns]
     df = df[["transcript_id", "value", *available_strata]].copy()
     df["score"] = pd.to_numeric(df["value"], errors="coerce")
     df = df.dropna(subset=["score"])
@@ -172,7 +185,8 @@ def print_report(report: pd.DataFrame) -> None:
     with pd.option_context("display.max_rows", None, "display.max_columns", None, "display.width", 200):
         print("\nSample breakdown per stratum (flagged = score >= threshold):")
         print(report.to_string(index=False))
-        totals = {col: int(report[col].sum()) for col in report.columns if col not in STRATA_COLUMNS}
+        stratum_cols = {TASK_SET_COLUMN, MODEL_COLUMN}
+        totals = {col: int(report[col].sum()) for col in report.columns if col not in stratum_cols}
         print(f"\nTotals: {totals}")
 
 
@@ -192,6 +206,7 @@ def main() -> None:
         target=args.target,
         predicate=args.predicate,
         seed=args.seed,
+        stratify_by_model=args.stratify_by_model,
     )
 
     scan_id = extract_scan_id(scan_dir)

@@ -3,11 +3,15 @@ Scanner for T.2: Required tools are consistently accessible during evaluation.
 """
 
 from inspect_scout import (
-    Scanner, 
-    Transcript, 
+    Scanner,
+    Transcript,
     llm_scanner,
-    scanner, 
+    scanner,
 )
+
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parents[2]))
 
 from scanner_dev.scanner_utils import get_task_result, get_tool_interactions, get_tools_by_model, get_system_messages, get_user_messages
 

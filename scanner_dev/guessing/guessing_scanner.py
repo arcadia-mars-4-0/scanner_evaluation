@@ -33,7 +33,7 @@ Your answer should include an explanation of your assessment. It should include 
 
 
 answer_format_prompt = """\
-Your job: Assess whether ground truth answers are complex enough that an agent cannot achieve meaningful scores through random or systematic guessing (e.g., free-text answers vs. binary yes/no, large answer spaces vs. small multiple-choice sets).
+Your job: Assess whether ground truth answers are complex enough that an agent cannot achieve meaningful scores through random or systematic guessing (e.g., open ended answers vs. binary yes/no, large answer spaces vs. small multiple-choice sets).
 
 Report your answer as a number between 0 (no issues) and 3 (clear issue). Guidance for these scores is:
 Score = 0, No Evidence: The structure of the task (e.g., generating functioning code) or answer space (e.g., floating point numeric) render guessing extremely unlikely or impossible.

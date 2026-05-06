@@ -20,7 +20,8 @@ build/
 
 # Data
 logs
-evals 
+evals
+plots
 #hf_data
 *.csv
 *.json*

@@ -35,13 +35,13 @@ Your answer should include an explanation of your assessment. It should include 
 
 answer_format_prompt = """\
 ## Task
-Assess whether the system and user prompts unambiguously communicate to the agent what format the final answer should take.
+Assess whether the system and user prompts unambiguously communicate to the agent what format the final answer should take, and identify potential failures due to format mismatches rather than incorrect reasoning.
 Use all other provided context (i.e tool trace, gold solutions, scorer outputs) to inform your analysis of the prompts.
 
 ## CORE PRINCIPLE 
-Ask: would a reasonable agent, reading ONLY the system and user prompts, know unambiguously what shape and content the answer must have for the scorer to accept it? If multiple reasonable interpretations exist that could produce a functionally correct answer the scorer might reject, or if the format is ambiguous, the prompt is underspecified. Do not focus on if the prompt is clear about HOW to solve a task or make a particular change, instead assess it on whether it is clear about WHAT the final answer should look like and any strict requirements for passing the task.
+Ask: would a reasonable agent, reading ONLY the prompts, know unambiguously what shape and content the answer must have for the scorer to accept it? If multiple reasonable interpretations exist that could produce a functionally correct answer the scorer might reject, or if the format is ambiguous, the prompt is underspecified. Do not focus on if the prompt is clear about HOW to solve a task or make a particular change, instead assess it on whether it is clear about WHAT the final answer should look like and any strict requirements for passing the task.
 
-You are evaluating the prompt, not the eval pipeline. A lenient scorer that accepts answers in many formats does not make a prompt well-specified. Conversely, a strict scorer does not make a clear prompt underspecified. Judge whether the prompt itself is clear enough about answer shape and content. 
+You are evaluating the prompt, not the eval pipeline. A lenient scorer that accepts answers in many formats does not make a prompt well-specified — it means the eval happens to be robust to ambiguity. Conversely, a strict scorer does not make a clear prompt underspecified. Judge whether the prompt itself is clear enough about answer shape and content. 
 
 ## DETERMINING THE SUBMITTED ANSWER
 If a submit tool is in use, remember it may be used to end the task, not to save the final answer. How to submit is not under judgement here and is not a violation.

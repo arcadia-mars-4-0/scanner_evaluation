@@ -32,7 +32,7 @@ EXCLUDE_EVAL_FILES: list[str] | None = None
 
 # ── Single-scanner evaluation (scanner_dev_evaluation.ipynb) ──────────────────
 
-SCAN_RESULTS_PATH = _DIR / "scan-results/scan_id=fLwRDNtLugpyWBQo9243xf"
+SCAN_RESULTS_PATH = _DIR / "scan-results/scan_id=oSn6KR5hvUvP96A8Ab9MDp"
 SCANNER_KEY = "answer_format"
 
 # ── Two-scanner comparison (scanner_dev_comparison.ipynb) ─────────────────────
@@ -40,12 +40,12 @@ SCANNER_KEY = "answer_format"
 SCANNERS: list[dict] = [
     {
         "label": "GPT 5.4",
-        "scan_results_path": _DIR / "scan-results/scan_id=Mcx24KtsbgMP9r7UPqGBZj",
+        "scan_results_path": _DIR / "scan-results/scan_id=SrBWbcsKwN3MDTL7nzDtYG",
         "scanner_key": "answer_format",
     },
     {
         "label": "Claude Sonnet 4.6",
-        "scan_results_path": _DIR / "scan-results/scan_id=hrjV5PM9VTjo6cvCza9Qor",
+        "scan_results_path": _DIR / "scan-results/scan_id=i4oTKgzfKNb3nqqjd5BoDu",
         "scanner_key": "answer_format",
     },
 ]

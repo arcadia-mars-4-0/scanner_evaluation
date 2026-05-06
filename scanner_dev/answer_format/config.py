@@ -32,7 +32,7 @@ EXCLUDE_EVAL_FILES: list[str] | None = None
 
 # ── Single-scanner evaluation (scanner_dev_evaluation.ipynb) ──────────────────
 
-SCAN_RESULTS_PATH = _DIR / "scan-results/scan_id=oSn6KR5hvUvP96A8Ab9MDp"
+SCAN_RESULTS_PATH = _DIR / "scan-results/scan_id=6K8kscSdGzMSMfpAvKoPM6"
 SCANNER_KEY = "answer_format"
 
 # ── Two-scanner comparison (scanner_dev_comparison.ipynb) ─────────────────────

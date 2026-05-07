@@ -31,17 +31,51 @@ scanners:
     scan_ids: []
     validation_files: 
       - 'post_validation_sample_MH6UxNTcbmXqXVqJnmmb7G.csv'
+  
   - target_scanner: tool_failure
     split: dev
     scanner_key: null
     scan_ids:
       - cpvwU5davvTxGbje6jdqYt
       - JfL9Q2bcaXtpiZZvcQRV7a
-    validation_files: null
+    validation_files:
+      - dev_t2_validation.csv
+  - target_scanner: tool_failure
+    split: test
+    scanner_key: null
+    scan_ids:
+      - SUmMAP2H2qEkwkBj8ts8QH
+    validation_files: 
+      - 'post_validation_sample_SUmMAP2H2qEkwkBj8ts8QH.csv'
+  
   - target_scanner: answer_format
     split: dev
     scanner_key: null
     scan_ids:
-      - hrjV5PM9VTjo6cvCza9Qor
-      - Mcx24KtsbgMP9r7UPqGBZj
-    validation_files: null
+      - i4oTKgzfKNb3nqqjd5BoDu
+      - SrBWbcsKwN3MDTL7nzDtYG
+    validation_files: 
+      - 'dev_oh1_validation.csv'
+  - target_scanner: answer_format
+    split: test
+    scanner_key: null
+    scan_ids:
+      - gRzXcrEozh3X2z2SLzeHeM
+    validation_files: 
+      - 'post_validation_sample_gRzXcrEozh3X2z2SLzeHeM.csv'
+
+  - target_scanner: guessing
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - Sj8zG9daRvaxwx7v6mj9hY
+      - issmrazV2aTAoZkZ2yUF9Y
+    validation_files: 
+      - 'dev_ob3_validation.csv'
+  - target_scanner: guessing
+    split: test
+    scanner_key: null
+    scan_ids:
+      - Vnb6GhThvWxeBFz427kMRb
+    validation_files: 
+      - 'post_validation_sample_Vnb6GhThvWxeBFz427kMRb.csv'

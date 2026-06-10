@@ -1,0 +1,70 @@
+# Run-specific config for analysis/scanner_glm.ipynb.
+#
+# Mirrors the `combined_*` config schema: each entry under `scanners` is one
+# target scanner + split + scan_id(s) + validation file(s). The GLM notebook
+# concatenates every block into one long-form frame, splits scanner runs by
+# vendor (gpt vs claude) so they show up as separate "graders" alongside the
+# human grades, and fits a binary logistic model over the violation indicator.
+
+# Subdirectory under analysis/results/ for figures, tables, and fit artifacts.
+# Set to null to skip saving outputs.
+results_subdir: glm/glm_dev_all
+
+# A grade is counted as a "violation" when it is >= this threshold.
+violation_threshold: 2
+
+# Restrict the modelling frame to these benchmark labels (after applying
+# BENCHMARK_ALIASES from analysis_utils). Set to null to keep every benchmark
+# that appears in the loaded scans.
+benchmarks: null
+  # - core_bench
+  # - swe_bench
+
+# hibayes MCMC settings. Bumped to small values for quick exploratory runs;
+# raise warmup/samples for production-quality intervals.
+mcmc:
+  num_warmup: 1000
+  num_samples: 1000
+  num_chains: 2
+  seed: 0
+
+# One entry per target scanner (criterion). The notebook tags each scan_id
+# with its scanner_model vendor (gpt-* vs sonnet-*/opus-*) so the scanner side
+# becomes two graders: scanner_gpt and scanner_claude.
+scanners:
+
+  - target_scanner: tool_failure
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - cpvwU5davvTxGbje6jdqYt    # sonnet-4.6
+      - JfL9Q2bcaXtpiZZvcQRV7a    # gpt-5.4
+    validation_files:
+      - dev_t2_validation.csv
+
+  - target_scanner: answer_format
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - i4oTKgzfKNb3nqqjd5BoDu    # sonnet-4.6
+      - SrBWbcsKwN3MDTL7nzDtYG    # gpt-5.4
+    validation_files:
+      - dev_oh1_validation.csv
+
+  - target_scanner: guessing
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - Sj8zG9daRvaxwx7v6mj9hY    # gpt-5.4
+      - issmrazV2aTAoZkZ2yUF9Y    # sonnet-4.6
+    validation_files:
+      - dev_ob3_validation.csv
+
+  - target_scanner: ground_truth_access
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - 3bTfaerfMoM8URaYbfVEwX    # gpt-5.4
+      - CG8Rg5PHtZAtpizwM592WB    # sonnet-4.6
+    validation_files:
+      - dev_t5_validation.csv

@@ -47,7 +47,7 @@ scanners:
       - SUmMAP2H2qEkwkBj8ts8QH
       - JtPRTDpECuV9Qy2DUXWxNz
     validation_files: 
-      - 'post_validation_sample_SUmMAP2H2qEkwkBj8ts8QH_DS.csv'
+      - 'post_validation_sample_SUmMAP2H2qEkwkBj8ts8QH.csv'
   
   - target_scanner: answer_format
     split: test

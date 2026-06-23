@@ -6,7 +6,7 @@ violation_threshold: 2
 
 # Subdirectory under analysis/results/combined/ for figures/tables.
 # Set to null to skip saving outputs.
-results_subdir: combined/combined_dev_nonT5
+results_subdir: combined/combined_dev
 
 # One entry per target scanner to include. Add more entries to extend.
 #   target_scanner    — directory name under evals/scans/
@@ -17,13 +17,12 @@ results_subdir: combined/combined_dev_nonT5
 #   validation_files  — list of validation CSV stems/filenames to load.
 #                       null = all CSVs in the validation directory.
 scanners:
-  
   - target_scanner: tool_failure
     split: dev
     scanner_key: null
     scan_ids:
-      - cpvwU5davvTxGbje6jdqYt
-      - JfL9Q2bcaXtpiZZvcQRV7a
+      - cpvwU5davvTxGbje6jdqYt    # sonnet-4.6
+      - JfL9Q2bcaXtpiZZvcQRV7a    # gpt-5.4
     validation_files:
       - dev_t2_validation.csv
 
@@ -31,16 +30,26 @@ scanners:
     split: dev
     scanner_key: null
     scan_ids:
-      - i4oTKgzfKNb3nqqjd5BoDu
-      - SrBWbcsKwN3MDTL7nzDtYG
-    validation_files: 
-      - 'dev_oh1_validation.csv'
+      - i4oTKgzfKNb3nqqjd5BoDu    # sonnet-4.6
+      - SrBWbcsKwN3MDTL7nzDtYG    # gpt-5.4
+    validation_files:
+      - dev_oh1_validation.csv
 
   - target_scanner: guessing
     split: dev
     scanner_key: null
     scan_ids:
-      - Sj8zG9daRvaxwx7v6mj9hY
-      - issmrazV2aTAoZkZ2yUF9Y
-    validation_files: 
-      - 'dev_ob3_validation.csv'
+      - Sj8zG9daRvaxwx7v6mj9hY    # gpt-5.4
+      - issmrazV2aTAoZkZ2yUF9Y    # sonnet-4.6
+    validation_files:
+      - dev_ob3_validation.csv
+
+  - target_scanner: ground_truth_access
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - 3bTfaerfMoM8URaYbfVEwX    # gpt-5.4
+      - CG8Rg5PHtZAtpizwM592WB    # sonnet-4.6
+    validation_files:
+      - dev_t5_validation.csv
+

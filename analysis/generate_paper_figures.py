@@ -416,6 +416,37 @@ def load_combined(specs: list[dict[str, Any]]) -> pd.DataFrame:
     return combined
 
 
+def configured_exclude_benchmarks(cfg: dict[str, Any]) -> set[str]:
+    paper_cfg = cfg.get("paper_figures") or {}
+    value = cfg.get("exclude_benchmarks", paper_cfg.get("exclude_benchmarks", ["gpqa_diamond", "hle"]))
+    return set(value or [])
+
+
+def filter_excluded_benchmarks(
+    df: pd.DataFrame,
+    exclude_benchmarks: set[str],
+    *,
+    label: str,
+) -> pd.DataFrame:
+    if not exclude_benchmarks or "benchmark" not in df.columns:
+        return df
+    before = len(df)
+    out = df[~df["benchmark"].isin(exclude_benchmarks)].copy()
+    removed = before - len(out)
+    if removed:
+        removed_counts = (
+            df[df["benchmark"].isin(exclude_benchmarks)]
+            .groupby("benchmark")
+            .size()
+            .sort_index()
+            .to_dict()
+        )
+        print(f"{label}: excluded {removed:,} row(s) for benchmarks {removed_counts}")
+    else:
+        print(f"{label}: no rows matched excluded benchmarks {sorted(exclude_benchmarks)}")
+    return out
+
+
 def ordered_split_benchmark_keys(df: pd.DataFrame) -> list[tuple[str, str]]:
     split_order = ["dev", "test"]
     available_splits = [s for s in split_order if s in set(df["split"].dropna())]
@@ -1017,7 +1048,7 @@ def scanner_agreement(
         return
 
     n_panels = len(panels)
-    n_cols = min(3, n_panels)
+    n_cols = 2 if n_panels == 4 else min(3, n_panels)
     n_rows = (n_panels + n_cols - 1) // n_cols
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(4.4 * n_cols, 4.0 * n_rows), squeeze=False)
     rows = []
@@ -1401,13 +1432,20 @@ def run_combined_figures(
     results_dir.mkdir(parents=True, exist_ok=True)
     save_fig, save_table = make_savers(results_dir)
     threshold = int(cfg.get("violation_threshold", 2))
+    exclude_benchmarks = configured_exclude_benchmarks(cfg)
 
     print(f"CONFIG      = {config_path.relative_to(PROJECT_ROOT)}")
     print(f"THRESHOLD   = {threshold}")
     print(f"WEIGHTING   = {weighting}")
+    print(f"EXCLUDE     = {sorted(exclude_benchmarks) if exclude_benchmarks else '(none)'}")
     print(f"RESULTS_DIR = {path_label(results_dir)}")
 
     combined = load_combined(specs)
+    combined = filter_excluded_benchmarks(
+        combined,
+        exclude_benchmarks,
+        label="combined",
+    )
     save_overview(combined, threshold, save_table)
     plot_grade_distribution(combined, save_fig)
     plot_human_grade_distribution(combined, save_fig)
@@ -1536,9 +1574,9 @@ def run_empirical_paper_figures(
     if not criteria:
         raise ValueError("Empirical paper figures require at least one scanner spec.")
 
-    paper_cfg = cfg.get("paper_figures") or {}
     threshold = int(cfg.get("violation_threshold", 2))
-    exclude_benchmarks = set(paper_cfg.get("exclude_benchmarks", ["gpqa_diamond", "hle"]))
+    paper_cfg = cfg.get("paper_figures") or {}
+    exclude_benchmarks = configured_exclude_benchmarks(cfg)
     stratifier_model = paper_cfg.get("stratifier_model", "gpt-5.4")
     secondary_model = paper_cfg.get("secondary_model", "sonnet-4.6")
     composites = paper_cfg.get("composites", ["max", "floor_mean"])
@@ -1574,7 +1612,11 @@ def run_empirical_paper_figures(
         return
 
     tx = pd.concat(frames, ignore_index=True)
-    tx = tx[~tx["benchmark"].isin(exclude_benchmarks)].copy()
+    tx = filter_excluded_benchmarks(
+        tx,
+        exclude_benchmarks,
+        label="empirical",
+    )
     if tx.empty:
         print("All empirical rows excluded by benchmark filter.")
         return

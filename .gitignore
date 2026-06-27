@@ -15,6 +15,7 @@ build/
 .vscode/
 .idea/
 *.md
+!analysis/README.md
 
 # OS
 .DS_Store
@@ -35,7 +36,10 @@ scanner_dev/ground_truth/scan-results
 scanner_dev/ground_truth/build/**
 
 #compiled results for analysis
-analysis/**/results
+analysis/**/results/**
+!analysis/**/results/**/
+!analysis/results/*.svg
+!analysis/results/**/*.svg
 
 #archived code
 scanner_pilot/

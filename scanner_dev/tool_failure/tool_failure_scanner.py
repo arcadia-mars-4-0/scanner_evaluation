@@ -1,7 +1,3 @@
-"""
-Scanner for T.2: Required tools are consistently accessible during evaluation.
-"""
-
 from inspect_scout import (
     Scanner,
     Transcript,
@@ -15,20 +11,13 @@ sys.path.insert(0, str(Path(__file__).parents[2]))
 
 from scanner_dev.scanner_utils import get_task_result, get_tool_interactions, get_tools_by_model, get_system_messages, get_user_messages
 
-# ---- Helpers -----
-
 def get_score_output(transcript: Transcript) -> str:
     """Return a string representation of the transcript score."""
     if transcript.score:
         return str(transcript.score)
     return "(not reported)"
 
-# ---- tool_access -----
-# LLM scanner for T.2: Required tools are consistently accessible during evaluation.
-# Looks at all tool calls and their outputs to assess whether required tools were
-# reliably available. Only flags failures with tools that are required for the task.
-
-TOOL_ACCESS_TEMPLATE = """\
+TOOL_FAILURE_TEMPLATE = """\
 You are an expert in LLM transcript analysis. Here is an LLM transcript you will be analyzing to answer a question:
 {{ question }}
 
@@ -36,7 +25,7 @@ Your answer should include an explanation of your assessment. It should include 
 
 {{ answer_format }}"""
 
-tool_access_prompt = """\
+tool_failure_prompt = """\
 # Tool Access Failure Assessment
 
 ## Task
@@ -85,7 +74,7 @@ Output only the numeric value (no label):
 """
 
 @scanner(messages="all", events=["model"])
-def tool_access() -> Scanner[Transcript]:
+def tool_failure() -> Scanner[Transcript]:
 
     async def build_question(transcript: Transcript) -> str:
 
@@ -99,7 +88,7 @@ def tool_access() -> Scanner[Transcript]:
         tools_available = get_tools_by_model(transcript)
 
         return (
-            f"{tool_access_prompt}"
+            f"{tool_failure_prompt}"
             f"--- TOOLS AVAILABLE TO AGENT ---\n{tools_available}\n\n"
             f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
             f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
@@ -111,6 +100,6 @@ def tool_access() -> Scanner[Transcript]:
     return llm_scanner(
         question=build_question,
         answer="numeric",
-        template=TOOL_ACCESS_TEMPLATE,
+        template=TOOL_FAILURE_TEMPLATE,
     )
 

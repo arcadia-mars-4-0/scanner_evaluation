@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[2]))
 
 from scanner_dev.scanner_utils import get_gold_answers, get_gold_solution
-from scanner_dev.tool_access.tool_access_scanner import get_task_result, get_tool_interactions
+from scanner_dev.tool_failure.tool_failure_scanner import get_task_result, get_tool_interactions
 from scanner_dev.scanner_utils import get_system_messages, get_user_messages, get_final_submission
 
 ANSWER_FORMAT_TEMPLATE = """\

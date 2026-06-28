@@ -1,6 +1,6 @@
 from pathlib import Path
 
-_DIR = Path(__file__).parent          # scanner_dev/tool_access/
+_DIR = Path(__file__).parent          # scanner_dev/tool_failure/
 _SCANS_DIR = Path(__file__).parents[2] / "evals/scans/tool_failure/dev/scan-results"
 
 # build dataset config
@@ -33,7 +33,7 @@ EXCLUDE_EVAL_FILES: list[str] | None = None
 # ── Single-scanner evaluation (scanner_dev_evaluation.ipynb) ──────────────────
 
 SCAN_RESULTS_PATH = _SCANS_DIR / "scan_id=JfL9Q2bcaXtpiZZvcQRV7a"
-SCANNER_KEY = "tool_access"
+SCANNER_KEY = "tool_failure"
 
 # ── Two-scanner comparison (scanner_dev_comparison.ipynb) ─────────────────────
 
@@ -41,12 +41,12 @@ SCANNERS: list[dict] = [
     {
         "label": "GPT 5.4",
         "scan_results_path": _SCANS_DIR / "scan_id=JfL9Q2bcaXtpiZZvcQRV7a",
-        "scanner_key": "tool_access",
+        "scanner_key": "tool_failure",
     },
     {
         "label": "Claude Sonnet 4.6",
         "scan_results_path": _SCANS_DIR / "scan_id=cpvwU5davvTxGbje6jdqYt",
-        "scanner_key": "tool_access",
+        "scanner_key": "tool_failure",
     },
 ]
 

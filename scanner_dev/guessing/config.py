@@ -1,6 +1,6 @@
 from pathlib import Path
 
-_DIR = Path(__file__).resolve().parent  # scanner_dev/tool_access/
+_DIR = Path(__file__).resolve().parent
 
 # build dataset config
 

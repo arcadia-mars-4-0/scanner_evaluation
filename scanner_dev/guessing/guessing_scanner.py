@@ -1,12 +1,3 @@
-
-# ---- guessing -----
-# Scanner to assess whether the task is vulnerable to guessing and if so has guessing present.
-# This is for criteria O.b.3
-# To do this, the scanner should have access to:
-# 1. The prompt (both system and user)
-# 2. Tool interactions (to see if the model is using tools to arrive at the answer or is guessing/inferencing from surface features)
-# 3. The gold standard/expected answer and gold solution, if available
-
 from inspect_scout import (
     Scanner, 
     Transcript, 
@@ -18,12 +9,12 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[2]))
 
-from scanners import get_gold_answers, get_gold_solution
+from scanner_dev.scanner_utils import get_gold_answers, get_gold_solution
 from scanner_dev.scanner_utils import get_system_messages, get_user_messages, get_final_submission, get_task_result, get_tool_interactions
 
 
 
-ANSWER_FORMAT_TEMPLATE = """\
+GUESSING_TEMPLATE = """\
 You are an expert in LLM transcript analysis. Here is an LLM transcript you will be analyzing to answer a question:
 {{ question }}
 
@@ -32,7 +23,7 @@ Your answer should include an explanation of your assessment. It should include 
 {{ answer_format }}"""
 
 
-answer_format_prompt = """\
+guessing_prompt = """\
 Your job: Assess whether ground truth answers are complex enough that an agent cannot achieve meaningful scores through random or systematic guessing (e.g., open ended answers vs. binary yes/no, large answer spaces vs. small multiple-choice sets).
 
 Report your answer as a number between 0 (no issues) and 3 (clear issue). Guidance for these scores is:
@@ -57,7 +48,7 @@ def guessing() -> Scanner[Transcript]:
         task_result = get_task_result(transcript)
 
         question = (
-            f"{answer_format_prompt}"
+            f"{guessing_prompt}"
             f"--- SYSTEM PROMPT ---\n{system_text}\n\n"
             f"--- USER PROMPT (task requirements) ---\n{user_text}\n\n"
             f"--- TOOL INTERACTIONS (all calls and outputs) ---\n{tool_context}\n\n"
@@ -76,5 +67,5 @@ def guessing() -> Scanner[Transcript]:
     return llm_scanner(
         question=build_question,
         answer="numeric",
-        template=ANSWER_FORMAT_TEMPLATE,
+        template=GUESSING_TEMPLATE,
     )

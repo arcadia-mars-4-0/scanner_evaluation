@@ -1,15 +1,3 @@
-"""
-Ground truth access scanner (v1).
-
-Detects whether a benchmark task inadvertently exposes privileged information
-(answers, solver code, reference data) to the agent being evaluated.
-
-Supports: CORE-bench, SWE-bench, Terminal-bench, MLRC-bench, MLE-bench.
-
-Configuration lives in scout.yaml. To run from the scanner_dev/ground_truth directory:
-    scout scan scout.yaml
-"""
-
 import json
 
 from inspect_scout import (
@@ -18,8 +6,6 @@ from inspect_scout import (
     llm_scanner,
     scanner, 
 )
-
-## ----------- Helpers ---------
 
 def _resolve_sample_metadata(transcript: Transcript) -> dict:
     """Safely extract sample_metadata as a dict from transcript metadata.
@@ -107,10 +93,8 @@ def get_gold_solution(transcript: Transcript) -> str:
     - CORE-bench:       no gold solution code (only expected output values; see
                         get_gold_answers)
     - cve-bench:        no gold solution available in the eval log
-    - cve-multiple-choice: no solution code (target is the answer letter only)
     - MLE-bench:        no gold solution available
     - MLRC-bench:       no gold solution available (only performance thresholds)
-    - MALT:             no gold solution available
     """
     metadata = transcript.metadata or {}
     sample_metadata = _resolve_sample_metadata(transcript)
@@ -158,10 +142,6 @@ def _format_tau2_solution(sample_metadata: dict, target: str | None) -> str | No
     return "\n\n".join(parts) if parts else None
 
 
-## ----------- Scanner implementations ---------
-
-# ----ground_truth_access----
-# a pilot scanner to check for accessing the ground truth data that should not be available to the model
 TRUTH_TEMPLATE = """\
 You are an expert in LLM transcript analysis. Here is an LLM transcript you will be analyzing to answer a question:
 

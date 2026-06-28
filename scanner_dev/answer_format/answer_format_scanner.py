@@ -1,28 +1,17 @@
-
-# ---- answer_format -----
-# check for correct specification of answer format that may lead to false negatives
-# This is for criteria O.h.1
-# To do this, the scanner should have access to:
-# 1. The prompt (both system and user)
-# 2. The final answer output
-# 3. The gold standard/expected answer and gold solution, if available
-
 from inspect_scout import (
     Scanner, 
     Transcript, 
     llm_scanner,
-    scanner, 
+    scanner,
 )
 
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[2]))
 
-from scanners import get_gold_answers, get_gold_solution
+from scanner_dev.scanner_utils import get_gold_answers, get_gold_solution
 from scanner_dev.tool_access.tool_access_scanner import get_task_result, get_tool_interactions
 from scanner_dev.scanner_utils import get_system_messages, get_user_messages, get_final_submission
-
-
 
 ANSWER_FORMAT_TEMPLATE = """\
 You are an expert in LLM transcript analysis. Here is an LLM transcript you will be analyzing to answer a question:

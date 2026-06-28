@@ -1,6 +1,6 @@
 from pathlib import Path
 
-_DIR = Path(__file__).resolve().parent  # scanner_dev/tool_access/
+_DIR = Path(__file__).resolve().parent
 
 # build dataset config
 
@@ -20,7 +20,7 @@ SPLITS = {
 }
 VALIDATION_COLUMNS = ("id", "target", "predicate")
 
-# ── Shared dataset inputs ──────────────────────────────────────────────────────
+# Shared dataset inputs
 
 PROVENANCE_CSV = _DIR / "build/dev_oh1_provenance.csv"
 VALIDATION_CSV = _DIR / "dev_oh1_validation.csv"
@@ -30,12 +30,10 @@ VIOLATION_THRESHOLD = 1
 INCLUDE_EVAL_FILES: list[str] | None = None
 EXCLUDE_EVAL_FILES: list[str] | None = None
 
-# ── Single-scanner evaluation (scanner_dev_evaluation.ipynb) ──────────────────
-
 SCAN_RESULTS_PATH = _DIR / "scan-results/scan_id=6K8kscSdGzMSMfpAvKoPM6"
 SCANNER_KEY = "answer_format"
 
-# ── Two-scanner comparison (scanner_dev_comparison.ipynb) ─────────────────────
+# Two-scanner comparison (scanner_dev_comparison.ipynb)
 
 SCANNERS: list[dict] = [
     {
@@ -50,7 +48,7 @@ SCANNERS: list[dict] = [
     },
 ]
 
-# ── Target rules ───────────────────────────────────────────────────────────────
+# Target rules
 
 TARGET_RULES: dict[str, dict] = {
     # Human-labeled validation runs — use the merged validation CSV.

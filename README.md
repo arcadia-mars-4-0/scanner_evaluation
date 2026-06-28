@@ -4,7 +4,6 @@ This repo contains the research code for the evaluation of benchmarks using scan
 It currently contains 4 primary sections:
 - `sample_size/` contains code used in the calculation of sample size requirements performed ahead of data collection
 - `analysis/` contains working analysis code, and pre-processed data supporting analysis
-- `eval_grading/` contains code to support human labeling of eval transcripts, and is also used as the working directory for intermediate datafiles that have not been completed and added to the huggingface repo.
 - `evals/` mirrors the huggingface repo, and is used to manage final data collection. 
 
 ## Environment Setup

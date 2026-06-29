@@ -450,22 +450,19 @@ def make_savers(
     results_dir: Path | None,
 ) -> tuple[Callable[..., None], Callable[..., None]]:
     """Return (save_fig, save_table) bound to ``results_dir``.
-
-    When ``results_dir`` is ``None`` both savers become no-ops, matching the
-    notebooks' "don't save outputs" mode.
     """
     def save_fig(fig, name: str) -> None:
         if results_dir is None:
             return
         path = results_dir / f"{name}.png"
         fig.savefig(path, bbox_inches="tight", dpi=150)
-        print(f"  saved figure → {path}")
+        # print(f"  saved figure → {path}")
 
     def save_table(df: pd.DataFrame, name: str, *, index: bool = False) -> None:
         if results_dir is None:
             return
         path = results_dir / f"{name}.csv"
         df.to_csv(path, index=index)
-        print(f"  saved table  → {path}")
+        # print(f"  saved table  → {path}")
 
     return save_fig, save_table

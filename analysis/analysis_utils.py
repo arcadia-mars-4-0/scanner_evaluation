@@ -454,8 +454,8 @@ def make_savers(
     def save_fig(fig, name: str) -> None:
         if results_dir is None:
             return
-        path = results_dir / f"{name}.png"
-        fig.savefig(path, bbox_inches="tight", dpi=150)
+        path = results_dir / f"{name}.svg"
+        fig.savefig(path, bbox_inches="tight")
         # print(f"  saved figure → {path}")
 
     def save_table(df: pd.DataFrame, name: str, *, index: bool = False) -> None:

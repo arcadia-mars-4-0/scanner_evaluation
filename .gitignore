@@ -37,6 +37,5 @@ analysis/**/results/**
 !analysis/results/*.svg
 !analysis/results/**/*.svg
 
-# Exceptions: keep tracked validation CSVs and preprocessed analysis inputs
+# Exceptions: keep tracked preprocessed analysis inputs
 !analysis/preprocessed*.csv
-!evals/**/*.csv

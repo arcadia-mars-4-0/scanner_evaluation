@@ -6,6 +6,27 @@ It currently contains 4 primary sections:
 - `analysis/` contains working analysis code, and pre-processed data supporting analysis
 - `evals/` mirrors the huggingface repo, and is used to manage final data collection. 
 
+## Evaluation Settings
+Evaluation implementations and usage
+Most benchmarks used an implementation from Inspect Evals, except Terminal-bench-2 which was accessed using the inspect-harbor adaptor package, and Litqa2, ScholarQA and SUPER which were from the Astabench suite. All evaluations were run with the ReAct agent. Kernelbench and Compute-eval were initially developed as non agentic single pass evaluations, but were updated and reported using agentic scaffolds.
+
+Where possible, we chose evaluations relevant to AI Research and Development, particularly in our development set, and also evaluations actively used in model system cards. 
+
+### Parameter Settings for evaluations
+In general, maintaining consistency across evaluation task versions and inspect versions was attempted where possible, as slight differences may lead to effects on the transcripts. However variation in our transcripts for this type of study can be allowed as it may be encouraged to try and elicit and capture violation states, though ideally we want to shift these intentionally to capture any changes.
+
+The majority of transcript files were produced with Inspect version 0.3.180.dev77, with some other versions used. CVE-bench uses two versions, with a large difference between 0.3.199 and 0.3.103 - however the task version for the eval was not changed. Swe_bench_verified had the task version change from 2-B → 3-C between transcripts, which were non-impacting changes relating to tool timeouts and configurable parameters. MLE-Bench had major task version changes - 4-B → 5-B → 5-D → 6-D, however it is only used for development. All transcripts maintained the same task version between transcripts in their test vs development set splits.
+We used Inspect Harbor - v0.4.7 and a forked version of astabench.
+
+### General requirements for producing evaluation transcripts
+At their most intense, the evaluations we ran used specs equivalent to the following, which allowed us to set Inspect's --max-samples 8 (and --max-sandboxes 8 for SWE-bench), dropping MLE-bench to --max-samples 2–4
+8× L40S (48 GB) 
+64–128 CPU cores
+512 GB–1 TB RAM (1 TB if you want MLE-bench closer to reference)
+~1 TB NVMe (bump to 4 TB+ for full MLE-bench)
+Linux, Docker + NVIDIA Container Toolkit, CUDA 12.x
+
+
 ## Environment Setup
 This project uses supports [UV](https://docs.astral.sh/uv/) for environment and dependency management.
 

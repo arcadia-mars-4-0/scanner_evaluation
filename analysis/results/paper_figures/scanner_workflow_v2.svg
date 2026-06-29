@@ -8,7 +8,7 @@
    version="1.1"
    id="svg53"
    sodipodi:docname="scanner_workflow_v2.svg"
-   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
    inkscape:export-filename="scanner_workflow_v2.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
@@ -28,13 +28,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.3372175"
-     inkscape:cx="599.00502"
-     inkscape:cy="433.36256"
-     inkscape:window-width="2560"
-     inkscape:window-height="1351"
-     inkscape:window-x="1911"
-     inkscape:window-y="-9"
+     inkscape:zoom="0.63779066"
+     inkscape:cx="273.60075"
+     inkscape:cy="348.07659"
+     inkscape:window-width="1512"
+     inkscape:window-height="829"
+     inkscape:window-x="0"
+     inkscape:window-y="38"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg53" />
   <title
@@ -286,7 +286,7 @@
      height="203.14062"
      rx="13.614219"
      id="rect28-9"
-     style="fill:#cbdef9;fill-opacity:0.984314;stroke:#1657b8;stroke-width:1.65153;stroke-dasharray:none;stroke-opacity:0.976471" />
+     style="fill:#cbdef9;fill-opacity:0.984314;stroke:#1657b8;stroke-width:1.65153;stroke-dasharray:none;stroke-opacity:0.976471;opacity:0.5" />
   <rect
      class="mini-green"
      x="3.9898224"
@@ -305,28 +305,32 @@
   <!-- Stage 1 content -->
   <text
      class="title blueText"
-     x="424.17343"
-     y="21.474609"
+     x="421.65009"
+     y="23.54719"
      text-anchor="middle"
-     id="text13">Establish Evaluation Framework</text>
+     id="text13"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'PT Sans';-inkscape-font-specification:'PT Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.2px;text-anchor:middle;fill:#1657b8">Setup Phase</text>
   <text
      class="stepTitle"
      x="124.47516"
      y="127.47461"
      text-anchor="middle"
-     id="text16"><tspan
+     id="text16"
+     style="-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#111111"><tspan
        x="124.47516"
-       id="tspan15">Define relevant</tspan><tspan
+       id="tspan15"
+       style="-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Define relevant</tspan><tspan
        x="124.47516"
        dy="27"
-       id="tspan16">criteria</tspan></text>
+       id="tspan16"
+       style="-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">criteria</tspan></text>
   <text
      class="stepTitle"
      x="125.38922"
      y="369.73807"
      text-anchor="middle"
      id="text16-0"
-     style="font-weight:700;font-size:24px;font-family:Arial, Helvetica, sans-serif;fill:#111111"><tspan
+     style="font-weight:bold;font-size:24px;font-family:'PT Sans';fill:#111111;-inkscape-font-specification:'PT Sans, Bold';font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle"><tspan
        sodipodi:role="line"
        id="tspan60"
        x="125.38922"
@@ -340,26 +344,27 @@
      x="125.30133"
      y="191.47461"
      text-anchor="middle"
-     id="text18"><tspan
+     id="text18"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18px;font-family:'PT Sans';-inkscape-font-specification:'PT Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
        sodipodi:role="line"
        id="tspan56"
        x="125.30133"
-       y="191.47461">Identify viable</tspan><tspan
+       y="191.47461">Identify scanner</tspan><tspan
        sodipodi:role="line"
        id="tspan57"
        x="125.30133"
-       y="213.97461">scanner criteria</tspan></text>
+       y="213.97461">viable criteria</tspan></text>
   <text
      class="subtitle"
      x="124.95856"
      y="429.59494"
      text-anchor="middle"
      id="text18-6"
-     style="font-size:18px;font-family:Arial, Helvetica, sans-serif;fill:#555b61"><tspan
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18px;font-family:'PT Sans';-inkscape-font-specification:'PT Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#555b61"><tspan
        sodipodi:role="line"
        id="tspan57-3"
        x="124.95856"
-       y="429.59494">Implement grading</tspan><tspan
+       y="429.59494">Develop using grading</tspan><tspan
        sodipodi:role="line"
        x="124.95856"
        y="452.09494"
@@ -377,9 +382,10 @@
   <!-- Stage 2 content -->
   <text
      class="title greenText"
-     x="296.20322"
-     y="271.58789"
-     id="text24">Develop Scanners</text>
+     x="301.70068"
+     y="267.16519"
+     id="text24"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'PT Sans';-inkscape-font-specification:'PT Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.2px;fill:#16783b">Develop Scanners</text>
   <rect
      class="mini-green"
      x="1"
@@ -388,7 +394,7 @@
      height="203.13475"
      rx="13.711516"
      id="rect28-9-7-1"
-     style="fill:#fef4f4;fill-opacity:1;stroke:#aa0000;stroke-width:2;stroke-dasharray:none;stroke-opacity:1" />
+     style="fill:#fbe9d1;fill-opacity:1;stroke:#aa0000;stroke-width:2;stroke-dasharray:none;stroke-opacity:1" />
   <path
      class="arrow"
      d="m 224.23863,640.90589 h 49.51848"
@@ -396,10 +402,10 @@
      style="fill:none;stroke:#5d6368;stroke-width:2;stroke-dasharray:none;marker-end:url(#Triangle-9-3)" />
   <text
      class="title greenText"
-     x="299.04977"
-     y="521.37421"
+     x="296.2569"
+     y="518.797"
      id="text24-8"
-     style="font-weight:700;font-size:30px;font-family:Arial, Helvetica, sans-serif;letter-spacing:-0.2px;fill:#aa0000;fill-opacity:1">Validate Scanners</text>
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'PT Sans';-inkscape-font-specification:'PT Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.2px;fill:#aa0000;fill-opacity:1">Validate Scanners</text>
   <!-- Stage 3 content -->
   <rect
      class="mini-green"
@@ -435,30 +441,30 @@
      y="338.85022"
      id="text29"
      transform="scale(1.0116245,0.98850908)"
-     style="stroke-width:0.863226">Development set</text>
+     style="stroke-width:0.863226;-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#16783b">Development set</text>
   <text
      class="bodySmall"
      x="607.05316"
      y="376.83215"
      id="text32"
      transform="scale(1.0116245,0.98850908)"
-     style="stroke-width:0.863226"><tspan
+     style="stroke-width:0.863226;-inkscape-font-specification:'PT Sans, Normal';font-family:'PT Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:19px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#111111"><tspan
        sodipodi:role="line"
        id="tspan77"
        x="607.05316"
        y="376.83215"><tspan
          x="607.05316"
          id="tspan31"
-         style="stroke-width:0.863226">Human graders label</tspan><tspan
+         style="stroke-width:0.863226;-inkscape-font-specification:'PT Sans, Normal';font-family:'PT Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:18.99999996px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Human graders label</tspan><tspan
          x="607.05316"
          id="tspan32"
-         style="stroke-width:0.863226" /></tspan><tspan
+         style="stroke-width:0.863226;-inkscape-font-specification:'PT Sans, Normal';font-family:'PT Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:18.99999996px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal" /></tspan><tspan
        sodipodi:role="line"
        id="tspan78"
        x="607.05316"
        y="400.58215"><tspan
          x="607.05316"
-         style="stroke-width:0.863226"
+         style="stroke-width:0.863226;-inkscape-font-specification:'PT Sans, Normal';font-family:'PT Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:18.99999996px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
          id="tspan79">all transcripts</tspan></tspan></text>
   <text
      class="bodySmall"
@@ -466,14 +472,14 @@
      y="432.07861"
      id="text34"
      transform="scale(1.0116245,0.98850908)"
-     style="stroke-width:0.863226"><tspan
+     style="stroke-width:0.863226;-inkscape-font-specification:'PT Sans, Normal';font-family:'PT Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:19px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#111111"><tspan
        x="607.05316"
        id="tspan33"
-       style="stroke-width:0.863226">Synthetic data provides</tspan><tspan
+       style="stroke-width:0.863226;-inkscape-font-specification:'PT Sans, Normal';font-family:'PT Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:18.99999996px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Synthetic data provides</tspan><tspan
        x="607.05316"
        dy="19.854195"
        id="tspan34"
-       style="stroke-width:0.863226">additional examples</tspan></text>
+       style="stroke-width:0.863226;-inkscape-font-specification:'PT Sans, Normal';font-family:'PT Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:18.99999996px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">additional examples</tspan></text>
   <g
      transform="matrix(0.87326043,0,0,0.85330664,569.66702,377.44242)"
      id="g46">
@@ -547,18 +553,22 @@
        x="658.31317"
        y="180.24347"
        text-anchor="middle"
-       id="text20"><tspan
+       id="text20"
+       style="-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#111111"><tspan
          x="658.31317"
-         id="tspan19">Create grading</tspan><tspan
+         id="tspan19"
+         style="-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Create grading</tspan><tspan
          x="658.31317"
          dy="27"
-         id="tspan20">rubrics</tspan></text>
+         id="tspan20"
+         style="-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">rubrics</tspan></text>
     <text
        class="subtitle"
        x="658.11395"
        y="244.24347"
        text-anchor="middle"
-       id="text21">0–3 severity scale</text>
+       id="text21"
+       style="-inkscape-font-specification:'PT Sans, Normal';font-family:'PT Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:18px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#555b61">0–3 severity scale</text>
     <g
        id="g82"
        transform="translate(-26.025432,2.2434645)">
@@ -610,18 +620,22 @@
        x="945"
        y="180"
        text-anchor="middle"
-       id="text22"><tspan
+       id="text22"
+       style="-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#111111"><tspan
          x="945"
-         id="tspan21">Select relevant</tspan><tspan
+         id="tspan21"
+         style="-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Select relevant</tspan><tspan
          x="945"
          id="tspan22"
-         dy="27">benchmarks</tspan></text>
+         dy="27"
+         style="-inkscape-font-specification:'PT Sans, Bold';font-family:'PT Sans';font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:24px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">benchmarks</tspan></text>
     <text
        class="subtitle"
        x="945"
        y="244"
        text-anchor="middle"
-       id="text23">For chosen criteria</text>
+       id="text23"
+       style="-inkscape-font-specification:'PT Sans, Normal';font-family:'PT Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:18px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#555b61">For chosen criteria</text>
     <rect
        x="928.66339"
        y="108.96686"
@@ -867,7 +881,7 @@
      y="624.61707"
      text-anchor="middle"
      id="text16-0-2"
-     style="font-weight:700;font-size:24px;font-family:Arial, Helvetica, sans-serif;fill:#111111"><tspan
+     style="font-weight:bold;font-size:24px;font-family:'PT Sans';fill:#111111;-inkscape-font-specification:'PT Sans, Bold';font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle"><tspan
        sodipodi:role="line"
        id="tspan61-1"
        x="125.57086"
@@ -882,29 +896,29 @@
      y="684.47394"
      text-anchor="middle"
      id="text18-6-6"
-     style="font-size:18px;font-family:Arial, Helvetica, sans-serif;fill:#555b61"><tspan
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18px;font-family:'PT Sans';-inkscape-font-specification:'PT Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#555b61"><tspan
        sodipodi:role="line"
-       id="tspan57-3-4"
        x="124.95856"
-       y="684.47394">Implement grading</tspan><tspan
+       y="684.47394"
+       id="tspan62-0">Produce scanner</tspan><tspan
        sodipodi:role="line"
        x="124.95856"
        y="706.97394"
-       id="tspan62-0">rubrics</tspan></text>
+       id="tspan1">grade outputs</tspan></text>
   <text
      class="stepTitle"
      x="403.4216"
      y="621.04309"
      text-anchor="middle"
      id="text16-0-2-4"
-     style="font-weight:700;font-size:24px;font-family:Arial, Helvetica, sans-serif;fill:#111111"><tspan
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;font-family:'PT Sans';-inkscape-font-specification:'PT Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#111111;text-anchor:middle"><tspan
        sodipodi:role="line"
        x="403.4216"
        y="621.04309"
-       id="tspan80-4">Evaluated against</tspan><tspan
+       id="tspan80-4">Evaluate against</tspan><tspan
        sodipodi:role="line"
        x="403.4216"
-       y="651.04309"
+       y="649.6145"
        id="tspan81">human graders</tspan></text>
   <text
      class="subtitle"
@@ -912,7 +926,7 @@
      y="680.89996"
      text-anchor="middle"
      id="text18-6-6-3"
-     style="font-size:18px;font-family:Arial, Helvetica, sans-serif;fill:#555b61"><tspan
+     style="font-size:18px;font-family:'PT Sans';fill:#555b61;-inkscape-font-specification:'PT Sans, Normal';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
        sodipodi:role="line"
        x="404.1965"
        y="680.89996"
@@ -945,7 +959,7 @@
        y="484.12033"
        text-anchor="middle"
        id="text18-6-1"
-       style="font-size:18px;font-family:Arial, Helvetica, sans-serif;fill:#555b61"><tspan
+       style="font-size:18px;font-family:'PT Sans';fill:#555b61;-inkscape-font-specification:'PT Sans, Normal';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle"><tspan
          sodipodi:role="line"
          x="631.59979"
          y="484.12033"
@@ -988,9 +1002,9 @@
        height="162.54356"
        rx="16.405752"
        id="rect28-3"
-       style="fill:#fac5c8;fill-opacity:1;stroke:#aa0000;stroke-width:1.89173;stroke-opacity:1" />
+       style="fill:#f7cda3;fill-opacity:1;stroke:#ba5100;stroke-width:1.89173;stroke-opacity:1" />
     <g
-       transform="matrix(0.85709518,0,0,0.58493621,823.37186,626.00971)"
+       transform="matrix(0.85709518,0,0,0.58493621,777.77508,621.86455)"
        id="g29-5">
       <ellipse
          class="iconGreen"
@@ -1013,18 +1027,18 @@
     </g>
     <text
        class="miniTitle greenText"
-       x="836.27228"
-       y="648.86389"
+       x="799.39453"
+       y="644.67053"
        id="text29-0"
        transform="scale(1.0116245,0.98850908)"
-       style="font-weight:700;font-size:24px;font-family:Arial, Helvetica, sans-serif;fill:#aa0000;fill-opacity:1;stroke-width:0.863226">Test set</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;font-family:'PT Sans';-inkscape-font-specification:'PT Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#aa0000;fill-opacity:1;stroke-width:0.863226">Test set</text>
     <text
        class="bodySmall"
        x="809.68024"
        y="684.82257"
        id="text32-7"
        transform="scale(1.0116245,0.98850908)"
-       style="font-size:19px;font-family:Arial, Helvetica, sans-serif;fill:#111111;stroke-width:0.863226"><tspan
+       style="font-size:18.99999996px;font-family:'PT Sans';fill:#111111;stroke-width:0.863226;-inkscape-font-specification:'PT Sans, Normal';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
          sodipodi:role="line"
          id="tspan75"
          x="809.68024"
@@ -1039,7 +1053,7 @@
        y="742.09229"
        id="text34-6"
        transform="scale(1.0116245,0.98850908)"
-       style="font-size:19px;font-family:Arial, Helvetica, sans-serif;fill:#111111;stroke-width:0.863226"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19px;font-family:'PT Sans';-inkscape-font-specification:'PT Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#111111;stroke-width:0.863226"><tspan
          sodipodi:role="line"
          id="tspan73"
          x="809.68024"
@@ -1047,7 +1061,7 @@
          sodipodi:role="line"
          x="809.68024"
          y="765.84229"
-         id="tspan74">selected trancripts</tspan></text>
+         id="tspan74">selected transcripts</tspan></text>
     <g
        transform="matrix(0.87326043,0,0,0.85330664,777.07751,738.47794)"
        id="g46-2">

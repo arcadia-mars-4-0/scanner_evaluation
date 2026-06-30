@@ -1,0 +1,52 @@
+# Run-specific config for analysis/scanner_combined_results.ipynb.
+# Aggregates results from multiple target scanners into a single dataframe.
+# Display invariants (model/benchmark aliases, colors) live in the notebook.
+
+violation_threshold: 2
+
+# Subdirectory under analysis/results/combined/ for figures/tables.
+# Set to null to skip saving outputs.
+results_subdir: combined/non_agentic_test
+
+# One entry per target scanner to include. Add more entries to extend.
+#   target_scanner    — directory name under evals/scans/
+#   split             — "dev" or "test"
+#   scanner_key       — null = auto-detect from parquets
+#   scan_ids          — explicit list of scan_id values to include.
+#                       Empty list = include every scan_id under the directory.
+#   validation_files  — list of validation CSV stems/filenames to load.
+#                       null = all CSVs in the validation directory.
+scanners:
+  - target_scanner: answer_format
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - i4oTKgzfKNb3nqqjd5BoDu
+      - SrBWbcsKwN3MDTL7nzDtYG
+    validation_files: 
+      - 'dev_oh1_validation.csv'
+  - target_scanner: answer_format
+    split: test
+    scanner_key: null
+    scan_ids:
+      - gRzXcrEozh3X2z2SLzeHeM
+      - BtPArb3ujCx9Zmw2kgNjp7
+    validation_files: 
+      - 'post_validation_sample_gRzXcrEozh3X2z2SLzeHeM.csv'
+
+  - target_scanner: guessing
+    split: dev
+    scanner_key: null
+    scan_ids:
+      - Sj8zG9daRvaxwx7v6mj9hY
+      - issmrazV2aTAoZkZ2yUF9Y
+    validation_files: 
+      - 'dev_ob3_validation.csv'
+  - target_scanner: guessing
+    split: test
+    scanner_key: null
+    scan_ids:
+      - Vnb6GhThvWxeBFz427kMRb
+      - 6y5opBB3gB7FtBYFi38WdQ
+    validation_files: 
+      - 'post_validation_sample_Vnb6GhThvWxeBFz427kMRb_AH.csv'

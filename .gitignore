@@ -39,3 +39,5 @@ analysis/**/results/**
 
 # Exceptions: keep tracked preprocessed analysis inputs
 !analysis/preprocessed*.csv
+# Exception: data csvs used for our test dev splits
+!scanner_dev/*/data/*.csv
